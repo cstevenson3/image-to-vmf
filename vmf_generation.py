@@ -1,4 +1,5 @@
 import vector
+import map_generation
 
 class VMF:
     def __init__(self):
@@ -280,3 +281,7 @@ def build_object(segment):
     typ = color_to_content[segment.label]
     floor = typ(segment)
     return floor
+
+def generate_vmf(config, map):
+    ''' Take a map and generate a valve map file object '''
+    assert isinstance(map, vmf_generation.Map)

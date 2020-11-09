@@ -4,7 +4,10 @@ import sys
 import operator
 import vector
 
-import vmf_generation
+class Geometry:
+    def __init__(self):
+        self._segments = {}  # key id, value ImageSegment
+        self._neighbours = {} # key id, value list of ids of neighbour ImageSegment's
 
 class Pixel:
     def __init__(self, r, g, b, a):
@@ -165,7 +168,10 @@ def direction_to_corner(direction):
 
 class ImageSegment:
     # pixels is (x,y) points
+    id = 0
     def __init__(self, label, pixels):
+        self._id = ImageSegment.id
+        ImageSegment.id += 1
         self._label = label
         self._pixels = pixels
         self._border = Border([])
@@ -269,35 +275,3 @@ def image_segmentation(image):
             for point in pixels:
                 image[point[1]][point[0]].set_segmented()
     return segments
-            
-
-def main(args):
-    png_reader = png.Reader("tests/example.png")
-    width, height, rows, info = png_reader.read()
-
-    image = Image(width, height)
-
-    for y, row in enumerate(rows):
-        for x in range(width):
-            image[y][x] = Pixel(row[4 * x], row[4 * x + 1], row[4 * x + 2], row[4 * x + 3])
-    
-    segments = image_segmentation(image)
-    for segment in segments:
-        segment.generate_border()
-        print segment.border
-        print "refining border..."
-        segment.refine_border(0.1)
-        print segment.border
-        print
-        print
-
-    vmf = vmf_generation.VMF()
-    # for segment in segments:
-    #     GIS = csgo.build_object(segment)
-    #     GIS.add_to_map(vmf)
-    vmf_body = vmf_generation.VMFBody()
-    vmf_body.write(vmf)
-    print(vmf.text)
-
-if __name__ == "__main__":
-    main(sys.argv)

@@ -4,7 +4,7 @@ import sys
 import operator
 import vector
 
-import csgo
+import vmf_generation
 
 class Pixel:
     def __init__(self, r, g, b, a):
@@ -291,11 +291,11 @@ def main(args):
         print
         print
 
-    vmf = csgo.VMF()
+    vmf = vmf_generation.VMF()
     # for segment in segments:
     #     GIS = csgo.build_object(segment)
     #     GIS.add_to_map(vmf)
-    vmf_body = csgo.VMFBody()
+    vmf_body = vmf_generation.VMFBody()
     vmf_body.write(vmf)
     print(vmf.text)
 

@@ -36,7 +36,7 @@ class VMFObject:
 
             value_str = "{}".format(value)  # default
 
-            if isinstance(value, tuple):
+            if isinstance(value, (tuple, list)):
                 value_str = "("
                 for item in value:
                     value_str += "{0} ".format(item)

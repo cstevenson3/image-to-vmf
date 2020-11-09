@@ -31,14 +31,20 @@ class VMFObject:
         vmf.text += ("    " * indentation) + "{0}\n".format(self.label)
         vmf.text += ("    " * indentation) + "{\n"
         for key in self.properties:
+            value_str = ""
             value = self.properties[key]
+
+            value_str = "{}".format(value)  # default
+
             if isinstance(value, tuple):
-                value = "("
-                for item in tuple:
-                    value += "{0} ".format(item)
-                value = value[:-1]
-                value += ")"
-            vmf.text += ("    " * (indentation + 1)) + "\"{0}\" \"{1}\"\n".format(key, value)
+                value_str = "("
+                for item in value:
+                    value_str += "{0} ".format(item)
+                value_str = value_str[:-1]
+                value_str += ")"
+
+            
+            vmf.text += ("    " * (indentation + 1)) + "\"{0}\" \"{1}\"\n".format(key, value_str)
         for child in self.children:
             child.write(vmf, indentation + 1)
         vmf.text += ("    " * indentation) + "}\n\n"
@@ -56,19 +62,19 @@ class VMFBody(VMFObject):
 
     @property
     def children(self):
-        return [self._versioninfo] 
-             + [self._visgroups]
-             + [self._world]
-             + self._entities
-             + self._hiddens
-             + [self._cameras]
-             + [self._cordon]
+        return [self._versioninfo] +\
+               [self._visgroups] +\
+               [self._world] +\
+               self._entities +\
+               self._hiddens +\
+               [self._cameras] +\
+               [self._cordon]
 
     def write(self, vmf):
-        for child in self._children:
+        for child in self.children:
             child.write(vmf, 0)
 
-def VersionInfo(VMFObject):
+class VersionInfo(VMFObject):
     def __init__(self):
         VMFObject.__init__(self)
     
@@ -79,12 +85,12 @@ def VersionInfo(VMFObject):
     @property
     def properties(self):
         return {"editorversion":"400",
-                "editorbuild": "3325"
+                "editorbuild": "3325",
                 "mapversion": "0",
                 "formatversion": "100",
                 "prefab": "0"}
 
-def VisGroups(VMFObject):
+class VisGroups(VMFObject):
     def __init__(self):
         VMFObject.__init__(self)
         self._visgroups = []

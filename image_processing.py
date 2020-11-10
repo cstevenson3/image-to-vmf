@@ -10,6 +10,14 @@ class Geometry:
     def __init__(self):
         self._segments = {}  # key id, value ImageSegment
         self._neighbours = {} # key id, value list of ids of neighbour ImageSegment's
+    
+    @property
+    def segments(self):
+        return self._segments
+
+    @segments.setter
+    def segments(self, value):
+        self._segments = value
 
 class ColorHSV(namedtuple('ColorHSV', 'h s v')):
     ''' HSV/HSB color format: hue, saturation, and brightness '''
@@ -265,4 +273,10 @@ def image_segmentation(image):
     return segments
 
 def process_geometry(config, image):
-    pass
+    segments = image_segmentation(image)
+    geometry = Geometry()
+    id = 0
+    for segment in segments:
+        geometry.segments[id] = segment
+        id += 1
+    return geometry

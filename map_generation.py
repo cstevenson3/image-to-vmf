@@ -9,6 +9,10 @@ class Map:
     def floors(self):
         return self._floors
 
+    @floors.setter
+    def floors(self, value):
+        self._floors = value
+
     @property
     def walls(self):
         return self._walls
@@ -23,13 +27,25 @@ class Floor:
     def border(self):
         return self._border
 
+    @border.setter
+    def border(self, value):
+        self._border = value
+
     @property
     def bottom(self):
         return self._bottom
+    
+    @bottom.setter
+    def bottom(self, value):
+        self._bottom = value
 
     @property
     def top(self):
         return self._top
+    
+    @top.setter
+    def top(self, value):
+        self._top = value
     
 
 class Wall:
@@ -40,6 +56,12 @@ class Wall:
 
 def generate_map(config, geometry):
     """ Take image geometry and generate a map """
-    assert isinstance(config, image_to_vmf.Config)
-    assert isinstance(config, image_processing.Geometry)
-    
+    floors = []
+    for segment in geometry.segments.values():
+        floor = Floor()
+        floor.border = segment.border
+        floor.top = 16
+        floor.bottom = 0
+    map = Map()
+    map.floors = floors
+    return map

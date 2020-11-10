@@ -71,7 +71,7 @@ class VMFBody(VMFObject):
 
     @world.setter
     def world(self, value):
-        self._world = world
+        self._world = value
 
     @property
     def children(self):
@@ -218,9 +218,9 @@ class Side(VMFObject):
                 "plane": self._plane,
                 "material": "BRICK/BRICKFLOOR001A",
                 "uaxis": "[1 0 0 0] 0.25",
-                "vaxis" "[0 0 -1 0] 0.25",
-                "rotation": "0"
-                "lightmapscale": "16"
+                "vaxis": "[0 0 -1 0] 0.25",
+                "rotation": "0",
+                "lightmapscale": "16",
                 "smoothing_groups": "0"}
 
     @property
@@ -329,7 +329,6 @@ def generate_floor_brushes(floor):
 
 def generate_vmf(config, map):
     ''' Take a map and generate a valve map file object '''
-    assert isinstance(map, vmf_generation.Map)
     brushes = []
     for floor in map.floors:
         floor_brushes = generate_floor_brushes(floor)

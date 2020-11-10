@@ -263,3 +263,6 @@ def image_segmentation(image):
             for point in pixels:
                 image[point[1]][point[0]].set_segmented()
     return segments
+
+def process_geometry(config, image):
+    pass

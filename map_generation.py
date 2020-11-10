@@ -5,15 +5,36 @@ class Map:
         self._floors = []
         self._walls = []
 
+    @property
+    def floors(self):
+        return self._floors
+
+    @property
+    def walls(self):
+        return self._walls
+
 class Floor:
     def __init__(self):
-        self._boundary = []
+        self._border = []  # list of Vec
         self._bottom = 0.0
         self._top = 4.0
 
+    @property
+    def border(self):
+        return self._border
+
+    @property
+    def bottom(self):
+        return self._bottom
+
+    @property
+    def top(self):
+        return self._top
+    
+
 class Wall:
     def __init__(self):
-        self._boundary = []
+        self._border = [] # list of Vec
         self._bottom = 0.0
         self._top = 50.0
 

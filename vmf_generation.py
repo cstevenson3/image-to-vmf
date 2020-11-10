@@ -66,6 +66,14 @@ class VMFBody(VMFObject):
         self._cordon = Cordon()
 
     @property
+    def world(self):
+        return self._world
+
+    @world.setter
+    def world(self, value):
+        self._world = world
+
+    @property
     def children(self):
         return [self._versioninfo] +\
                [self._visgroups] +\
@@ -122,6 +130,14 @@ class World(VMFObject):
     def label(self):
         return "world"
 
+    @property 
+    def solids(self):
+        return self._solids
+
+    @solids.setter
+    def solids(self, value):
+        self._solids = value
+
     @property
     def properties(self):
         return {"id": self._id,
@@ -164,17 +180,52 @@ class Cordon(VMFObject):
                 "maxs": (-99999, -99999, -99999),
                 "active": 0}
 
-
 class Brush(VMFObject):
     id = 0
-    def __init__(self, planes):
+    def __init__(self, sides):
         VMFObject.__init__(self)
-        self._label = "solid"
         self._id = Brush.id
         Brush.id += 1
-        self._properties["id"] = self._id
-        self._children = []
-        self._planes = planes
+        self._sides = sides
+
+    @property
+    def label(self):
+        return "solid"
+
+    @property
+    def properties(self):
+        return {"id": self._id}
+
+    @property
+    def children(self):
+        return self._sides
+
+class Side(VMFObject):
+    id = 0
+    def __init__(self, plane):
+        VMFObject.__init__(self)
+        self._id = Side.id
+        Side.id += 1
+        self._plane = plane
+
+    @property
+    def label(self):
+        return "side"
+
+    @property
+    def properties(self):
+        return {"id": self._id,
+                "plane": self._plane,
+                "material": "BRICK/BRICKFLOOR001A",
+                "uaxis": "[1 0 0 0] 0.25",
+                "vaxis" "[0 0 -1 0] 0.25",
+                "rotation": "0"
+                "lightmapscale": "16"
+                "smoothing_groups": "0"}
+
+    @property
+    def children(self):
+        return []
 
 def is_cc(a, b, c):
     val = vector.cross(vector.subtract(c, a), vector.subtract(b, a))
@@ -248,36 +299,6 @@ def add_z_dimension(triangles):
         for v in range(3):
             triangles[i][v] = (triangles[i][v][0], triangles[i][v][1], 0)
 
-class Floor(VMFObject):
-    def __init__(self, segment):
-        VMFObject.__init__(self)
-        self._floor_thickness = 64
-        self._vertices = segment.border.vertices
-        self._brushes = []
-        self._triangles = triangulate(segment.border.vertices)
-        add_z_dimension(self._triangles)
-        self.build_floor_brushes()
-    
-    def build_floor_brushes(self):
-        floor_thickness = self._floor_thickness
-        # one brush per triangle
-        for triangle in self._triangles:
-            top_plane = [(0,0,0), (1,0,0), (0,0,-1)]  # y=0, arbitrary x,z
-            bottom_plane = [(0,-floor_thickness,0), (1,-floor_thickness,0), (0,-floor_thickness,-1)]  # y=-floor_width, arbitrary x,z
-            side_planes = []
-            for i in range(3):
-                side_plane = [triangle[i], vector.subtract(triangle[i], (0,0,floor_thickness)), triangle[(i + 1) % 3]]
-                side_planes.append(side_plane)
-            planes = side_planes
-            planes.append(top_plane)
-            planes.append(bottom_plane)
-            brush = Brush(planes)
-            self._brushes.append(brush)
-
-    def write(self, vmf):
-        for brush in self._brushes:
-            brush.add_to_map(map)
-
 def build_object(segment):
     color_to_content = {}
     color_to_content[(0, 0, 0, 255)] = Floor
@@ -286,6 +307,35 @@ def build_object(segment):
     floor = typ(segment)
     return floor
 
+def generate_floor_brushes(floor):
+    brushes = []
+    vertices = floor.border
+    triangles = triangulate(vertices)
+    add_z_dimension(triangles)
+    # one brush per triangle
+    for triangle in triangles:
+        top_plane = [(0,floor.top,0), (1,floor.top,0), (0,floor.top,-1)]  # y=floor.top, arbitrary x,z
+        bottom_plane = [(0,floor.bottom,0), (1,floor.bottom,0), (0,floor.bottom,-1)]  # y=floor.bottom, arbitrary x,z
+        side_planes = []
+        for i in range(3):
+            side_plane = [triangle[i], vector.subtract(triangle[i], (0,0,1)), triangle[(i + 1) % 3]]
+            side_planes.append(side_plane)
+        planes = side_planes
+        planes.append(top_plane)
+        planes.append(bottom_plane)
+        brush = Brush(planes)
+        brushes.append(brush)
+    return brushes
+
 def generate_vmf(config, map):
     ''' Take a map and generate a valve map file object '''
     assert isinstance(map, vmf_generation.Map)
+    brushes = []
+    for floor in map.floors:
+        floor_brushes = generate_floor_brushes(floor)
+        brushes += floor_brushes
+    world = World()
+    world.solids = brushes
+    vmf_body = VMFBody()
+    vmf_body.world = world
+    return vmf_body

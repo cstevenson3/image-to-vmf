@@ -1,5 +1,7 @@
-import png
 import sys
+from collections import namedtuple
+
+import png
 
 import operator
 import vector
@@ -9,27 +11,9 @@ class Geometry:
         self._segments = {}  # key id, value ImageSegment
         self._neighbours = {} # key id, value list of ids of neighbour ImageSegment's
 
-class ColorHSV():
+class ColorHSV(namedtuple('ColorHSV', 'h s v')):
     ''' HSV/HSB color format: hue, saturation, and brightness '''
-    def __init__(self, h, s, v):
-        self._h = h
-        self._s = s
-        self._v = v
-
-    @property
-    def h(self):
-        return self._h
-
-    @property
-    def s(self):
-        return self._s
-
-    @property
-    def v(self):
-        return self._v
-
-    def __repr__(self):
-        return "ColorHSV({0:<3}, {1:<3}, {2:<3})".format(self._h, self._s, self._v)
+    pass
 
 class Pixel:
     def __init__(self, color):

@@ -9,7 +9,7 @@ class SegmentType(Enum):
 
 class Config:
     def __init__(self):
-        self._color_mappings = {}  # key color
+        self._color_mappings = {}  # key , value 
 
 def main(args):
     png_reader = png.Reader("tests/example.png")

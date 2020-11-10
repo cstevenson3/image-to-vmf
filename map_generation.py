@@ -21,3 +21,4 @@ def generate_map(config, geometry):
     """ Take image geometry and generate a map """
     assert isinstance(config, image_to_vmf.Config)
     assert isinstance(config, image_processing.Geometry)
+    

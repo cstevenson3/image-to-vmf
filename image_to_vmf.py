@@ -1,5 +1,15 @@
+from enum import Enum
+
 from image_processing import *
 from vmf_generation import *
+
+class SegmentType(Enum):
+    ''' What blocks of colour map to: floors, walls etc. '''
+    FLOOR, WALL = range(2)
+
+class Config:
+    def __init__(self):
+        self._color_mappings = {}  # key color
 
 def main(args):
     png_reader = png.Reader("tests/example.png")
@@ -9,17 +19,18 @@ def main(args):
 
     for y, row in enumerate(rows):
         for x in range(width):
-            image[y][x] = Pixel(row[4 * x], row[4 * x + 1], row[4 * x + 2], row[4 * x + 3])
+            color = ColorHSV(row[4 * x], row[4 * x + 1], row[4 * x + 2])
+            image[y][x] = Pixel(color)
     
     segments = image_segmentation(image)
     for segment in segments:
         segment.generate_border()
-        print segment.border
-        print "refining border..."
+        print(segment.border)
+        print("refining border...")
         segment.refine_border(0.1)
-        print segment.border
-        print
-        print
+        print(segment.border)
+        print()
+        print()
 
     vmf = VMF()
     # for segment in segments:

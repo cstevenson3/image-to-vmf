@@ -9,33 +9,37 @@ class Geometry:
         self._segments = {}  # key id, value ImageSegment
         self._neighbours = {} # key id, value list of ids of neighbour ImageSegment's
 
+class ColorHSV():
+    ''' HSV/HSB color format: hue, saturation, and brightness '''
+    def __init__(self, h, s, v):
+        self._h = h
+        self._s = s
+        self._v = v
+
+    @property
+    def h(self):
+        return self._h
+
+    @property
+    def s(self):
+        return self._s
+
+    @property
+    def v(self):
+        return self._v
+
+    def __repr__(self):
+        return "ColorHSV({0:<3}, {1:<3}, {2:<3})".format(self._h, self._s, self._v)
+
 class Pixel:
-    def __init__(self, r, g, b, a):
-        self._r = r
-        self._g = g
-        self._b = b
-        self._a = a
+    def __init__(self, color):
+        assert isinstance(color, ColorHSV)
+        self._color = color
         self._segmented = None
-    
-    @property
-    def r(self):
-        return self._r
-
-    @property
-    def g(self):
-        return self._g
-
-    @property
-    def b(self):
-        return self._b
-
-    @property 
-    def a(self):
-        return self._a
 
     @property
     def color(self):
-        return (self._r, self._g, self._b, self._a)
+        return self._color
 
     def discovered(self):
         return self._segmented is not None
@@ -50,7 +54,7 @@ class Pixel:
         return self._segmented is True
 
     def __repr__(self):
-        return "Pixel({0:<3},{1:<3},{2:<3},{3:<3})".format(self._r, self._g, self._b, self._a)
+        return "Pixel({0:<3})".format(self._color)
 
 class PixelRow:
     def __init__(self, width):

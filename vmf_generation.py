@@ -309,7 +309,7 @@ def build_object(segment):
 
 def generate_floor_brushes(floor):
     brushes = []
-    vertices = floor.border
+    vertices = floor.border.vertices
     triangles = triangulate(vertices)
     add_z_dimension(triangles)
     # one brush per triangle
@@ -323,7 +323,8 @@ def generate_floor_brushes(floor):
         planes = side_planes
         planes.append(top_plane)
         planes.append(bottom_plane)
-        brush = Brush(planes)
+        sides = [Side(plane) for plane in planes]
+        brush = Brush(sides)
         brushes.append(brush)
     return brushes
 

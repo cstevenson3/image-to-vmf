@@ -62,6 +62,7 @@ def generate_map(config, geometry):
         floor.border = segment.border
         floor.top = 16
         floor.bottom = 0
+        floors.append(floor)
     map = Map()
     map.floors = floors
     return map

@@ -164,10 +164,10 @@ def direction_to_corner(direction):
 
 class ImageSegment:
     # pixels is (x,y) points
-    id = 0
+    next_id = 0
     def __init__(self, label, pixels):
-        self._id = ImageSegment.id
-        ImageSegment.id += 1
+        self._id = ImageSegment.next_id
+        ImageSegment.next_id += 1
         self._label = label
         self._pixels = pixels
         self._border = Border([])
@@ -217,6 +217,10 @@ class ImageSegment:
         area = len(self._pixels)  # since each pixel is area 1
         absolute_tolerance = tolerance * area
         self._border.refine(absolute_tolerance)
+
+    @property
+    def id(self):
+        return self._id
 
     @property
     def label(self):
@@ -274,9 +278,10 @@ def image_segmentation(image):
 
 def process_geometry(config, image):
     segments = image_segmentation(image)
-    geometry = Geometry()
-    id = 0
     for segment in segments:
-        geometry.segments[id] = segment
-        id += 1
+        segment.generate_border()
+        segment.refine_border(0.1)
+    geometry = Geometry()
+    for segment in segments:
+        geometry.segments[segment.id] = segment
     return geometry

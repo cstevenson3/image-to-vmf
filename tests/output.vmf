@@ -1,0 +1,358 @@
+versioninfo
+{
+    "editorversion" "400"
+    "editorbuild" "3325"
+    "mapversion" "0"
+    "formatversion" "100"
+    "prefab" "0"
+}
+
+visgroups
+{
+}
+
+world
+{
+    "id" "0"
+    "mapversion" "0"
+    "classname" "worldspawn"
+    "skyname" "sky_dust"
+    solid
+    {
+        "id" "0"
+        side
+        {
+            "id" "0"
+            "plane" "(8 8 0) (8 8 -1) (8 0 0)"
+            "material" "BRICK/BRICKFLOOR001A"
+            "uaxis" "[1 0 0 0] 0.25"
+            "vaxis" "[0 0 -1 0] 0.25"
+            "rotation" "0"
+            "lightmapscale" "16"
+            "smoothing_groups" "0"
+        }
+
+        side
+        {
+            "id" "1"
+            "plane" "(8 0 0) (8 0 -1) (0 0 0)"
+            "material" "BRICK/BRICKFLOOR001A"
+            "uaxis" "[1 0 0 0] 0.25"
+            "vaxis" "[0 0 -1 0] 0.25"
+            "rotation" "0"
+            "lightmapscale" "16"
+            "smoothing_groups" "0"
+        }
+
+        side
+        {
+            "id" "2"
+            "plane" "(0 0 0) (0 0 -1) (8 8 0)"
+            "material" "BRICK/BRICKFLOOR001A"
+            "uaxis" "[1 0 0 0] 0.25"
+            "vaxis" "[0 0 -1 0] 0.25"
+            "rotation" "0"
+            "lightmapscale" "16"
+            "smoothing_groups" "0"
+        }
+
+        side
+        {
+            "id" "3"
+            "plane" "(0 16 0) (1 16 0) (0 16 -1)"
+            "material" "BRICK/BRICKFLOOR001A"
+            "uaxis" "[1 0 0 0] 0.25"
+            "vaxis" "[0 0 -1 0] 0.25"
+            "rotation" "0"
+            "lightmapscale" "16"
+            "smoothing_groups" "0"
+        }
+
+        side
+        {
+            "id" "4"
+            "plane" "(0 0 0) (1 0 0) (0 0 -1)"
+            "material" "BRICK/BRICKFLOOR001A"
+            "uaxis" "[1 0 0 0] 0.25"
+            "vaxis" "[0 0 -1 0] 0.25"
+            "rotation" "0"
+            "lightmapscale" "16"
+            "smoothing_groups" "0"
+        }
+
+    }
+
+    solid
+    {
+        "id" "1"
+        side
+        {
+            "id" "5"
+            "plane" "(8 8 0) (8 8 -1) (0 0 0)"
+            "material" "BRICK/BRICKFLOOR001A"
+            "uaxis" "[1 0 0 0] 0.25"
+            "vaxis" "[0 0 -1 0] 0.25"
+            "rotation" "0"
+            "lightmapscale" "16"
+            "smoothing_groups" "0"
+        }
+
+        side
+        {
+            "id" "6"
+            "plane" "(0 0 0) (0 0 -1) (0 8 0)"
+            "material" "BRICK/BRICKFLOOR001A"
+            "uaxis" "[1 0 0 0] 0.25"
+            "vaxis" "[0 0 -1 0] 0.25"
+            "rotation" "0"
+            "lightmapscale" "16"
+            "smoothing_groups" "0"
+        }
+
+        side
+        {
+            "id" "7"
+            "plane" "(0 8 0) (0 8 -1) (8 8 0)"
+            "material" "BRICK/BRICKFLOOR001A"
+            "uaxis" "[1 0 0 0] 0.25"
+            "vaxis" "[0 0 -1 0] 0.25"
+            "rotation" "0"
+            "lightmapscale" "16"
+            "smoothing_groups" "0"
+        }
+
+        side
+        {
+            "id" "8"
+            "plane" "(0 16 0) (1 16 0) (0 16 -1)"
+            "material" "BRICK/BRICKFLOOR001A"
+            "uaxis" "[1 0 0 0] 0.25"
+            "vaxis" "[0 0 -1 0] 0.25"
+            "rotation" "0"
+            "lightmapscale" "16"
+            "smoothing_groups" "0"
+        }
+
+        side
+        {
+            "id" "9"
+            "plane" "(0 0 0) (1 0 0) (0 0 -1)"
+            "material" "BRICK/BRICKFLOOR001A"
+            "uaxis" "[1 0 0 0] 0.25"
+            "vaxis" "[0 0 -1 0] 0.25"
+            "rotation" "0"
+            "lightmapscale" "16"
+            "smoothing_groups" "0"
+        }
+
+    }
+
+    solid
+    {
+        "id" "2"
+        side
+        {
+            "id" "10"
+            "plane" "(4 6 0) (4 6 -1) (6 6 0)"
+            "material" "BRICK/BRICKFLOOR001A"
+            "uaxis" "[1 0 0 0] 0.25"
+            "vaxis" "[0 0 -1 0] 0.25"
+            "rotation" "0"
+            "lightmapscale" "16"
+            "smoothing_groups" "0"
+        }
+
+        side
+        {
+            "id" "11"
+            "plane" "(6 6 0) (6 6 -1) (6 2 0)"
+            "material" "BRICK/BRICKFLOOR001A"
+            "uaxis" "[1 0 0 0] 0.25"
+            "vaxis" "[0 0 -1 0] 0.25"
+            "rotation" "0"
+            "lightmapscale" "16"
+            "smoothing_groups" "0"
+        }
+
+        side
+        {
+            "id" "12"
+            "plane" "(6 2 0) (6 2 -1) (4 6 0)"
+            "material" "BRICK/BRICKFLOOR001A"
+            "uaxis" "[1 0 0 0] 0.25"
+            "vaxis" "[0 0 -1 0] 0.25"
+            "rotation" "0"
+            "lightmapscale" "16"
+            "smoothing_groups" "0"
+        }
+
+        side
+        {
+            "id" "13"
+            "plane" "(0 16 0) (1 16 0) (0 16 -1)"
+            "material" "BRICK/BRICKFLOOR001A"
+            "uaxis" "[1 0 0 0] 0.25"
+            "vaxis" "[0 0 -1 0] 0.25"
+            "rotation" "0"
+            "lightmapscale" "16"
+            "smoothing_groups" "0"
+        }
+
+        side
+        {
+            "id" "14"
+            "plane" "(0 0 0) (1 0 0) (0 0 -1)"
+            "material" "BRICK/BRICKFLOOR001A"
+            "uaxis" "[1 0 0 0] 0.25"
+            "vaxis" "[0 0 -1 0] 0.25"
+            "rotation" "0"
+            "lightmapscale" "16"
+            "smoothing_groups" "0"
+        }
+
+    }
+
+    solid
+    {
+        "id" "3"
+        side
+        {
+            "id" "15"
+            "plane" "(6 2 0) (6 2 -1) (2 2 0)"
+            "material" "BRICK/BRICKFLOOR001A"
+            "uaxis" "[1 0 0 0] 0.25"
+            "vaxis" "[0 0 -1 0] 0.25"
+            "rotation" "0"
+            "lightmapscale" "16"
+            "smoothing_groups" "0"
+        }
+
+        side
+        {
+            "id" "16"
+            "plane" "(2 2 0) (2 2 -1) (4 4 0)"
+            "material" "BRICK/BRICKFLOOR001A"
+            "uaxis" "[1 0 0 0] 0.25"
+            "vaxis" "[0 0 -1 0] 0.25"
+            "rotation" "0"
+            "lightmapscale" "16"
+            "smoothing_groups" "0"
+        }
+
+        side
+        {
+            "id" "17"
+            "plane" "(4 4 0) (4 4 -1) (6 2 0)"
+            "material" "BRICK/BRICKFLOOR001A"
+            "uaxis" "[1 0 0 0] 0.25"
+            "vaxis" "[0 0 -1 0] 0.25"
+            "rotation" "0"
+            "lightmapscale" "16"
+            "smoothing_groups" "0"
+        }
+
+        side
+        {
+            "id" "18"
+            "plane" "(0 16 0) (1 16 0) (0 16 -1)"
+            "material" "BRICK/BRICKFLOOR001A"
+            "uaxis" "[1 0 0 0] 0.25"
+            "vaxis" "[0 0 -1 0] 0.25"
+            "rotation" "0"
+            "lightmapscale" "16"
+            "smoothing_groups" "0"
+        }
+
+        side
+        {
+            "id" "19"
+            "plane" "(0 0 0) (1 0 0) (0 0 -1)"
+            "material" "BRICK/BRICKFLOOR001A"
+            "uaxis" "[1 0 0 0] 0.25"
+            "vaxis" "[0 0 -1 0] 0.25"
+            "rotation" "0"
+            "lightmapscale" "16"
+            "smoothing_groups" "0"
+        }
+
+    }
+
+    solid
+    {
+        "id" "4"
+        side
+        {
+            "id" "20"
+            "plane" "(6 2 0) (6 2 -1) (4 4 0)"
+            "material" "BRICK/BRICKFLOOR001A"
+            "uaxis" "[1 0 0 0] 0.25"
+            "vaxis" "[0 0 -1 0] 0.25"
+            "rotation" "0"
+            "lightmapscale" "16"
+            "smoothing_groups" "0"
+        }
+
+        side
+        {
+            "id" "21"
+            "plane" "(4 4 0) (4 4 -1) (4 6 0)"
+            "material" "BRICK/BRICKFLOOR001A"
+            "uaxis" "[1 0 0 0] 0.25"
+            "vaxis" "[0 0 -1 0] 0.25"
+            "rotation" "0"
+            "lightmapscale" "16"
+            "smoothing_groups" "0"
+        }
+
+        side
+        {
+            "id" "22"
+            "plane" "(4 6 0) (4 6 -1) (6 2 0)"
+            "material" "BRICK/BRICKFLOOR001A"
+            "uaxis" "[1 0 0 0] 0.25"
+            "vaxis" "[0 0 -1 0] 0.25"
+            "rotation" "0"
+            "lightmapscale" "16"
+            "smoothing_groups" "0"
+        }
+
+        side
+        {
+            "id" "23"
+            "plane" "(0 16 0) (1 16 0) (0 16 -1)"
+            "material" "BRICK/BRICKFLOOR001A"
+            "uaxis" "[1 0 0 0] 0.25"
+            "vaxis" "[0 0 -1 0] 0.25"
+            "rotation" "0"
+            "lightmapscale" "16"
+            "smoothing_groups" "0"
+        }
+
+        side
+        {
+            "id" "24"
+            "plane" "(0 0 0) (1 0 0) (0 0 -1)"
+            "material" "BRICK/BRICKFLOOR001A"
+            "uaxis" "[1 0 0 0] 0.25"
+            "vaxis" "[0 0 -1 0] 0.25"
+            "rotation" "0"
+            "lightmapscale" "16"
+            "smoothing_groups" "0"
+        }
+
+    }
+
+}
+
+cameras
+{
+    "activecamera" "-1"
+}
+
+cordon
+{
+    "mins" "99999 99999 99999"
+    "maxs" "-99999 -99999 -99999"
+    "active" "0"
+}
+

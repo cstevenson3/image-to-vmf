@@ -22,6 +22,7 @@ class Config:
 def import_config(filepath):
     f = open(filepath)
     config_json = json.loads(f.read())
+    f.close()
     return Config(config_json)
 
 def import_image(filepath):
@@ -49,6 +50,9 @@ def main(args):
     vmf_body = generate_vmf(config, map)
     vmf_body.write(vmf)
     print(vmf.text)
+    output = open("tests/output.vmf", "w")
+    output.write(vmf.text)
+    output.close()
 
 if __name__ == "__main__":
     main(sys.argv)

@@ -13,6 +13,20 @@ class VMF:
     def text(self, value):
         self._text = value
 
+def vmf_value_format(value, outer=True):
+    value_str = "{}".format(value)  # default
+    if isinstance(value, (tuple, list)):
+        if not outer:
+            value_str = "("
+        else:
+            value_str = ""
+        for item in value:
+            value_str += "{0} ".format(vmf_value_format(item, outer=False))
+        value_str = value_str[:-1]
+        if not outer:
+            value_str += ")"
+    return value_str
+
 class VMFObject:
     def __init__(self):
         pass
@@ -36,19 +50,8 @@ class VMFObject:
         vmf.text += ("    " * indentation) + "{0}\n".format(self.label)
         vmf.text += ("    " * indentation) + "{\n"
         for key in self.properties:
-            value_str = ""
             value = self.properties[key]
-
-            value_str = "{}".format(value)  # default
-
-            if isinstance(value, (tuple, list)):
-                value_str = "("
-                for item in value:
-                    value_str += "{0} ".format(item)
-                value_str = value_str[:-1]
-                value_str += ")"
-
-            
+            value_str = vmf_value_format(value)
             vmf.text += ("    " * (indentation + 1)) + "\"{0}\" \"{1}\"\n".format(key, value_str)
         for child in self.children:
             child.write(vmf, indentation + 1)

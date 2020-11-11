@@ -103,8 +103,8 @@ class VersionInfo(VMFObject):
     @property
     def properties(self):
         return {"editorversion":"400",
-                "editorbuild": "3325",
-                "mapversion": "0",
+                "editorbuild": "8456",
+                "mapversion": "1",
                 "formatversion": "100",
                 "prefab": "0"}
 
@@ -121,8 +121,28 @@ class VisGroups(VMFObject):
     def children(self):
         return self._visgroups
 
+class ViewSettings(VMFObject):
+    def __init__(self):
+        VMFObject.__init__(self)
+    
+    @property
+    def label(self):
+        return "viewsettings"
+    
+    @property
+    def properties(self):
+        return {"bSnapToGrid": 1,
+                "bShowGrid": 1,
+                "bShowLogicalGrid": 0,
+                "nGridSpacing": 64,
+                "bShow3DGrid": 0}
+
+    @property
+    def children(self):
+        return []
+
 class World(VMFObject):
-    id = 0
+    id = 1
     def __init__(self):
         VMFObject.__init__(self)
         self._id = World.id
@@ -181,12 +201,12 @@ class Cordon(VMFObject):
 
     @property
     def properties(self):
-        return {"mins": (99999, 99999, 99999),
-                "maxs": (-99999, -99999, -99999),
-                "active": 0}
+        # "mins": (99999, 99999, 99999),
+        # "maxs": (-99999, -99999, -99999),
+        return {"active": 0}
 
 class Brush(VMFObject):
-    id = 0
+    id = 1
     def __init__(self, sides):
         VMFObject.__init__(self)
         self._id = Brush.id
@@ -203,7 +223,25 @@ class Brush(VMFObject):
 
     @property
     def children(self):
-        return self._sides
+        return self._sides + [Editor()]
+
+class Editor(VMFObject):
+    def __init__(self):
+        VMFObject.__init__(self)
+
+    @property
+    def label(self):
+        return "editor"
+
+    @property
+    def properties(self):
+        return {"color": (0, 243, 144),
+                "visgroupshown": 1,
+                "visgroupautoshown": 1}
+
+    @property
+    def children(self):
+        return []
 
 def generate_uv_axes(plane):
     u = vector.subtract(plane[1], plane[0])
@@ -219,7 +257,7 @@ def generate_uv_axes(plane):
     return (uaxis, vaxis)
 
 class Side(VMFObject):
-    id = 0
+    id = 1
     def __init__(self, plane):
         VMFObject.__init__(self)
         self._id = Side.id
@@ -235,7 +273,7 @@ class Side(VMFObject):
     def properties(self):
         return {"id": self._id,
                 "plane": self._plane,
-                "material": "BRICK/BRICKFLOOR001A",
+                "material": "BRICK/BRICK_FLOOR_02",
                 "uaxis": self._uaxis,
                 "vaxis": self._vaxis,
                 "rotation": "0",

@@ -16,15 +16,17 @@ class VMF:
 def vmf_value_format(value, outer=True):
     value_str = "{}".format(value)  # default
     if isinstance(value, (tuple, list)):
+        opener = "[" if isinstance(value, list) else "("
+        closer = "]" if isinstance(value, list) else ")"
         if not outer:
-            value_str = "("
+            value_str = opener
         else:
             value_str = ""
         for item in value:
             value_str += "{0} ".format(vmf_value_format(item, outer=False))
         value_str = value_str[:-1]
         if not outer:
-            value_str += ")"
+            value_str += closer
     return value_str
 
 class VMFObject:
@@ -203,6 +205,19 @@ class Brush(VMFObject):
     def children(self):
         return self._sides
 
+def generate_uv_axes(plane):
+    u = vector.subtract(plane[1], plane[0])
+    v = vector.subtract(plane[2], plane[0])
+
+    u = list(u)
+    u.append(0)
+    v = list(v)
+    v.append(0)
+
+    uaxis = (u, 0.25)
+    vaxis = (v, 0.25)
+    return (uaxis, vaxis)
+
 class Side(VMFObject):
     id = 0
     def __init__(self, plane):
@@ -210,6 +225,7 @@ class Side(VMFObject):
         self._id = Side.id
         Side.id += 1
         self._plane = plane
+        self._uaxis, self._vaxis = generate_uv_axes(plane)
 
     @property
     def label(self):
@@ -220,8 +236,8 @@ class Side(VMFObject):
         return {"id": self._id,
                 "plane": self._plane,
                 "material": "BRICK/BRICKFLOOR001A",
-                "uaxis": "[1 0 0 0] 0.25",
-                "vaxis": "[0 0 -1 0] 0.25",
+                "uaxis": self._uaxis,
+                "vaxis": self._vaxis,
                 "rotation": "0",
                 "lightmapscale": "16",
                 "smoothing_groups": "0"}

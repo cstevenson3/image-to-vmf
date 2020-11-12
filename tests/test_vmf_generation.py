@@ -10,14 +10,13 @@ def test_triangulate():
     #assert(all([triangles[i] == reference[i] for i in range(len(reference))]))
 
 def test_generate_vmf():
-    pass
-    # floor = Floor()
-    # floor.border = [(0,0), (1,0), (1,1), (0,1)]
-    # floor.bottom = 0
-    # floor.top = 16
-    # map = Map()
-    # map.floors.append(floor)
-    # vmf_body = generate_vmf_body(import_config("tests/test_data/config.json"), map)
-    # vmf = VMF()
-    # vmf_body.write(vmf)
-    # print(vmf.text)
+    floor = Floor()
+    floor.border = [(0,0), (1,0), (1,1), (0,1)]
+    floor.bottom = 0
+    floor.top = 16
+    map = Map()
+    map.floors.append(floor)
+    vmf_body = generate_vmf_body(import_config("tests/test_data/config.json"), map)
+    vmf = VMF()
+    vmf_body.write(vmf)
+    print(vmf.text)

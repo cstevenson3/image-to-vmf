@@ -348,7 +348,8 @@ def add_z_dimension(triangles):
 def generate_floor_brushes(floor):
     brushes = []
     vertices = floor.border
-    triangles = triangulate(vertices)
+    triangle_indices = triangulate(vertices)
+    triangles = [[vertices[i], vertices[j], vertices[k]] for i,j,k in triangle_indices]
     # make sure all are cc
     for i in range(len(triangles)):
         if not is_cc(*(triangles[i])):

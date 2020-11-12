@@ -320,34 +320,43 @@ def can_connect(vertices, i1, i2):
         
     return True
 
-def triangulate(vertices):
-    if len(vertices) == 3:
-        return [list(vertices)]
+def triangulate(vertices, indices=[i for i in range(len(vertices))]):
+    ''' Triangulate a counter-clockwise polygon 
+    into counter-clockwise triangles. Returns indices '''
+    if len(indices) == 3:
+        return [list(indices)]
     
-    triangles = []
+    chosen_triangle = None
+    # for each potential triangle start index
+    for i in range(len(indices)):
+        index_0 = indices[i]
+        index_1 = indices[(i + 1) % len(indices)]
+        index_2 = indices[(i + 2) % len(indices)]
+        triangle = [vertices[index_0], vertices[index_1], vertices[index_2]]
+        if is_cc(*triangle):
+            line_0 = (triangle[0], triangle[1])
+            line_1 = (triangle[1], triangle[2])
+            line_2 = (triangle[2], triangle[0])
+            no_self_intersection = True
+            for j in range(len(indices)):
+                j_0 = indices[j]
+                j_1 = indices[(j + 1) % len(indices)]
+                other_line = (vertices[j_0], vertices[j_1])
+                line_0_intersect = is_intersect(line_0, other_line)
+                line_1_intersect = is_intersect(line_1, other_line)
+                line_2_intersect = is_intersect(line_2, other_line)
+                if line_0_intersect or line_1_intersect or line_2_intersect:
+                    no_self_intersection = False
+                    break
+            if no_self_intersection:
+                chosen_triangle = triangle
+                next_indices = indices[:]
+                next_indices.pop((i + 1) % len(indices))
+                other_triangles = triangulate(vertices, next_indices)
+                return [chosen_triangle] + other_triangles
 
-    connected_vertices = [1]
-    # starting from the first viable connection to index 1
-    for index in range(3, len(vertices)):
-        # if can connect from 1
-        if can_connect(vertices, 1, index):
-            connected_vertices.append(index)
-    polygons = []
-    current_streak = [1]
-    for i in range(2, len(vertices) + 1):
-        index = i % len(vertices)
-        if index not in connected_vertices:
-            current_streak.append(index)
-            continue
-        current_streak.append(index)
-        polygons.append(current_streak[:])
-        current_streak = [1, index]
-    polygons.append(current_streak[:])
-    
-    for polygon in polygons:
-        polygon_vertices = [vertices[i] for i in polygon]
-        triangles += triangulate(polygon_vertices)
-    return triangles
+    raise AssertionError("Polygon should be CCW")
+
 
 def add_z_dimension(triangles):
     for i in range(len(triangles)):
@@ -364,7 +373,7 @@ def build_object(segment):
 
 def generate_floor_brushes(floor):
     brushes = []
-    vertices = floor.border.vertices
+    vertices = floor.border
     triangles = triangulate(vertices)
     # make sure all are cc
     for i in range(len(triangles)):
@@ -388,7 +397,7 @@ def generate_floor_brushes(floor):
         brushes.append(brush)
     return brushes
 
-def generate_vmf(config, map):
+def generate_vmf_body(config, map):
     ''' Take a map and generate a valve map file object '''
     brushes = []
     for floor in map.floors:

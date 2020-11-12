@@ -47,7 +47,7 @@ def main(args):
     map = generate_map(config, geometry)
 
     vmf = VMF()
-    vmf_body = generate_vmf(config, map)
+    vmf_body = generate_vmf_body(config, map)
     vmf_body.write(vmf)
     print(vmf.text)
     output = open("tests/test_data/output.vmf", "w")

@@ -14,6 +14,9 @@ def is_cc(a, b, c):
         return None
     return val > 0
 
+def is_intersect(segment_1, segment_2):
+    return is_intersect(segment_1[0], segment_1[1], segment_2[0], segment_2[1])
+
 def is_intersect(p1, p2, q1, q2):
     dir1 = is_cc(p1, p2, q1)
     dir2 = is_cc(p1, p2, q2)

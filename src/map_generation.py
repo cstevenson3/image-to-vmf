@@ -2,51 +2,14 @@ import image_to_vmf
 
 class Map:
     def __init__(self):
-        self._floors = []
-        self._walls = []
-
-    @property
-    def floors(self):
-        return self._floors
-
-    @floors.setter
-    def floors(self, value):
-        self._floors = value
-
-    @property
-    def walls(self):
-        return self._walls
+        self.floors = []
+        self.walls = []
 
 class Floor:
     def __init__(self):
-        self._border = []  # list of Vec
-        self._bottom = 0.0
-        self._top = 4.0
-
-    @property
-    def border(self):
-        return self._border
-
-    @border.setter
-    def border(self, value):
-        self._border = value
-
-    @property
-    def bottom(self):
-        return self._bottom
-    
-    @bottom.setter
-    def bottom(self, value):
-        self._bottom = value
-
-    @property
-    def top(self):
-        return self._top
-    
-    @top.setter
-    def top(self, value):
-        self._top = value
-    
+        self.border = []  # list of Vec
+        self.bottom = 0.0
+        self.top = 4.0
 
 class Wall:
     def __init__(self):
@@ -61,7 +24,7 @@ def generate_map(config, geometry):
         if segment.label.v == 0:
             continue
         floor = Floor()
-        floor.border = segment.border
+        floor.border = segment.border.vertices
         floor.top = 16
         floor.bottom = 0
         floors.append(floor)

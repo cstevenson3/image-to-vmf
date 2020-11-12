@@ -5,9 +5,8 @@ def subtract(a, b):
         pass
     return tuple(map(operator.sub, a, b))
 
-# 2D
 def cross(a, b):
-    return float(a[0] * b[1] - a[1] * b[0])
+    return a[0] * b[1] - a[1] * b[0]
 
 def is_cc(a, b, c):
     val = cross(subtract(b, a), subtract(c, a))

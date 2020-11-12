@@ -50,7 +50,7 @@ def main(args):
     vmf_body = generate_vmf(config, map)
     vmf_body.write(vmf)
     print(vmf.text)
-    output = open("tests/output.vmf", "w")
+    output = open("tests/test_data/output.vmf", "w")
     output.write(vmf.text)
     output.close()
 

@@ -148,21 +148,13 @@ class World(VMFObject):
         VMFObject.__init__(self)
         self._id = World.id
         World.id += 1
-        self._solids = []
+        self.solids = []
         self._hiddens = []
         self._groups = []
     
     @property
     def label(self):
         return "world"
-
-    @property 
-    def solids(self):
-        return self._solids
-
-    @solids.setter
-    def solids(self, value):
-        self._solids = value
 
     @property
     def properties(self):
@@ -173,7 +165,7 @@ class World(VMFObject):
     
     @property
     def children(self):
-        return self._solids + self._hiddens + self._groups
+        return self.solids + self._hiddens + self._groups
 
 class Cameras(VMFObject):
     def __init__(self):

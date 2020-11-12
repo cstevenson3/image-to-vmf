@@ -1,4 +1,4 @@
-from ..vector import *
+from src.vector import *
 
 def test_is_cc():
     assert(is_cc((0, 0), (1, 0), (0, 1)))

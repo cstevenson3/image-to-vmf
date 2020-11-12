@@ -10,7 +10,7 @@ def cross(a, b):
     return float(a[0] * b[1] - a[1] * b[0])
 
 def is_cc(a, b, c):
-    val = vector.cross(vector.subtract(b, a), vector.subtract(c, a))
+    val = cross(subtract(b, a), subtract(c, a))
     if val == 0:
         return None
     return val > 0

@@ -39,8 +39,6 @@ def import_image(filepath):
     return image
 
 def main(args):
-    triangulate([(0,3), (1,2), (0,0), (2,0), (1,1), (3,2)])
-
     config = import_config("tests/test_data/config.json")
     image = import_image("tests/test_data/example.png")
 

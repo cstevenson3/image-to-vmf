@@ -1,4 +1,5 @@
 import vector
+from vector import *
 import map_generation
 
 class VMF:
@@ -293,19 +294,6 @@ class Side(VMFObject):
     @property
     def children(self):
         return []
-
-def is_cc(a, b, c):
-    val = vector.cross(vector.subtract(b, a), vector.subtract(c, a))
-    if val == 0:
-        return None
-    return val > 0
-
-def is_intersect(p1, p2, q1, q2):
-    dir1 = is_cc(p1, p2, q1)
-    dir2 = is_cc(p1, p2, q2)
-    dir3 = is_cc(q1, q2, p1)
-    dir4 = is_cc(q1, q2, p2)
-    return dir1 != dir2 and dir3 != dir4
 
 def can_connect(vertices, i1, i2):
     p1 = vertices[i1]

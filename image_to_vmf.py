@@ -35,7 +35,7 @@ def import_image(filepath):
         for x in range(width):
             h, s, v = colorsys.rgb_to_hsv(row[4 * x], row[4 * x + 1], row[4 * x + 2])
             color = ColorHSV(h, s, v)
-            image[y][x] = Pixel(color)
+            image[(height - 1) - y][x] = Pixel(color)
     return image
 
 def main(args):

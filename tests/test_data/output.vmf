@@ -23,10 +23,10 @@ world
         side
         {
             "id" "1"
-            "plane" "(8 8 0) (8 8 -1) (8 0 0)"
+            "plane" "(8 8 16) (8 8 0) (8 0 16)"
             "material" "BRICK/BRICK_FLOOR_02"
-            "uaxis" "[0 0 -1 0] 0.25"
-            "vaxis" "[0 -8 0 0] 0.25"
+            "uaxis" "[0 1 0 0] 0.25"
+            "vaxis" "[0 0 1 0] 0.25"
             "rotation" "0"
             "lightmapscale" "16"
             "smoothing_groups" "0"
@@ -35,10 +35,10 @@ world
         side
         {
             "id" "2"
-            "plane" "(8 0 0) (8 0 -1) (0 0 0)"
+            "plane" "(8 0 16) (8 0 0) (0 0 16)"
             "material" "BRICK/BRICK_FLOOR_02"
-            "uaxis" "[0 0 -1 0] 0.25"
-            "vaxis" "[-8 0 0 0] 0.25"
+            "uaxis" "[1 0 0 0] 0.25"
+            "vaxis" "[0 0 1 0] 0.25"
             "rotation" "0"
             "lightmapscale" "16"
             "smoothing_groups" "0"
@@ -47,10 +47,10 @@ world
         side
         {
             "id" "3"
-            "plane" "(0 0 0) (0 0 -1) (8 8 0)"
+            "plane" "(0 0 16) (0 0 0) (8 8 16)"
             "material" "BRICK/BRICK_FLOOR_02"
-            "uaxis" "[0 0 -1 0] 0.25"
-            "vaxis" "[8 8 0 0] 0.25"
+            "uaxis" "[0 1 0 0] 0.25"
+            "vaxis" "[0 0 1 0] 0.25"
             "rotation" "0"
             "lightmapscale" "16"
             "smoothing_groups" "0"
@@ -59,10 +59,10 @@ world
         side
         {
             "id" "4"
-            "plane" "(0 16 0) (1 16 0) (0 16 -1)"
+            "plane" "(0 0 16) (8 0 16) (8 8 16)"
             "material" "BRICK/BRICK_FLOOR_02"
             "uaxis" "[1 0 0 0] 0.25"
-            "vaxis" "[0 0 -1 0] 0.25"
+            "vaxis" "[0 1 0 0] 0.25"
             "rotation" "0"
             "lightmapscale" "16"
             "smoothing_groups" "0"
@@ -71,10 +71,10 @@ world
         side
         {
             "id" "5"
-            "plane" "(0 0 0) (1 0 0) (0 0 -1)"
+            "plane" "(8 8 0) (8 0 0) (0 0 0)"
             "material" "BRICK/BRICK_FLOOR_02"
             "uaxis" "[1 0 0 0] 0.25"
-            "vaxis" "[0 0 -1 0] 0.25"
+            "vaxis" "[0 1 0 0] 0.25"
             "rotation" "0"
             "lightmapscale" "16"
             "smoothing_groups" "0"
@@ -95,10 +95,10 @@ world
         side
         {
             "id" "6"
-            "plane" "(8 8 0) (8 8 -1) (0 0 0)"
+            "plane" "(8 8 16) (8 8 0) (0 0 16)"
             "material" "BRICK/BRICK_FLOOR_02"
-            "uaxis" "[0 0 -1 0] 0.25"
-            "vaxis" "[-8 -8 0 0] 0.25"
+            "uaxis" "[0 1 0 0] 0.25"
+            "vaxis" "[0 0 1 0] 0.25"
             "rotation" "0"
             "lightmapscale" "16"
             "smoothing_groups" "0"
@@ -107,10 +107,10 @@ world
         side
         {
             "id" "7"
-            "plane" "(0 0 0) (0 0 -1) (0 8 0)"
+            "plane" "(0 0 16) (0 0 0) (0 8 16)"
             "material" "BRICK/BRICK_FLOOR_02"
-            "uaxis" "[0 0 -1 0] 0.25"
-            "vaxis" "[0 8 0 0] 0.25"
+            "uaxis" "[0 1 0 0] 0.25"
+            "vaxis" "[0 0 1 0] 0.25"
             "rotation" "0"
             "lightmapscale" "16"
             "smoothing_groups" "0"
@@ -119,10 +119,10 @@ world
         side
         {
             "id" "8"
-            "plane" "(0 8 0) (0 8 -1) (8 8 0)"
+            "plane" "(0 8 16) (0 8 0) (8 8 16)"
             "material" "BRICK/BRICK_FLOOR_02"
-            "uaxis" "[0 0 -1 0] 0.25"
-            "vaxis" "[8 0 0 0] 0.25"
+            "uaxis" "[1 0 0 0] 0.25"
+            "vaxis" "[0 0 1 0] 0.25"
             "rotation" "0"
             "lightmapscale" "16"
             "smoothing_groups" "0"
@@ -131,10 +131,10 @@ world
         side
         {
             "id" "9"
-            "plane" "(0 16 0) (1 16 0) (0 16 -1)"
+            "plane" "(0 8 16) (0 0 16) (8 8 16)"
             "material" "BRICK/BRICK_FLOOR_02"
             "uaxis" "[1 0 0 0] 0.25"
-            "vaxis" "[0 0 -1 0] 0.25"
+            "vaxis" "[0 1 0 0] 0.25"
             "rotation" "0"
             "lightmapscale" "16"
             "smoothing_groups" "0"
@@ -143,10 +143,10 @@ world
         side
         {
             "id" "10"
-            "plane" "(0 0 0) (1 0 0) (0 0 -1)"
+            "plane" "(8 8 0) (0 0 0) (0 8 0)"
             "material" "BRICK/BRICK_FLOOR_02"
             "uaxis" "[1 0 0 0] 0.25"
-            "vaxis" "[0 0 -1 0] 0.25"
+            "vaxis" "[0 1 0 0] 0.25"
             "rotation" "0"
             "lightmapscale" "16"
             "smoothing_groups" "0"
@@ -167,10 +167,10 @@ world
         side
         {
             "id" "11"
-            "plane" "(4 6 0) (4 6 -1) (6 6 0)"
+            "plane" "(4 6 16) (4 6 0) (6 6 16)"
             "material" "BRICK/BRICK_FLOOR_02"
-            "uaxis" "[0 0 -1 0] 0.25"
-            "vaxis" "[2 0 0 0] 0.25"
+            "uaxis" "[1 0 0 0] 0.25"
+            "vaxis" "[0 0 1 0] 0.25"
             "rotation" "0"
             "lightmapscale" "16"
             "smoothing_groups" "0"
@@ -179,10 +179,10 @@ world
         side
         {
             "id" "12"
-            "plane" "(6 6 0) (6 6 -1) (6 2 0)"
+            "plane" "(6 6 16) (6 6 0) (6 2 16)"
             "material" "BRICK/BRICK_FLOOR_02"
-            "uaxis" "[0 0 -1 0] 0.25"
-            "vaxis" "[0 -4 0 0] 0.25"
+            "uaxis" "[0 1 0 0] 0.25"
+            "vaxis" "[0 0 1 0] 0.25"
             "rotation" "0"
             "lightmapscale" "16"
             "smoothing_groups" "0"
@@ -191,10 +191,10 @@ world
         side
         {
             "id" "13"
-            "plane" "(6 2 0) (6 2 -1) (4 6 0)"
+            "plane" "(6 2 16) (6 2 0) (4 6 16)"
             "material" "BRICK/BRICK_FLOOR_02"
-            "uaxis" "[0 0 -1 0] 0.25"
-            "vaxis" "[-2 4 0 0] 0.25"
+            "uaxis" "[0 1 0 0] 0.25"
+            "vaxis" "[0 0 1 0] 0.25"
             "rotation" "0"
             "lightmapscale" "16"
             "smoothing_groups" "0"
@@ -203,10 +203,10 @@ world
         side
         {
             "id" "14"
-            "plane" "(0 16 0) (1 16 0) (0 16 -1)"
+            "plane" "(6 2 16) (6 6 16) (4 6 16)"
             "material" "BRICK/BRICK_FLOOR_02"
             "uaxis" "[1 0 0 0] 0.25"
-            "vaxis" "[0 0 -1 0] 0.25"
+            "vaxis" "[0 1 0 0] 0.25"
             "rotation" "0"
             "lightmapscale" "16"
             "smoothing_groups" "0"
@@ -215,10 +215,10 @@ world
         side
         {
             "id" "15"
-            "plane" "(0 0 0) (1 0 0) (0 0 -1)"
+            "plane" "(4 6 0) (6 6 0) (6 2 0)"
             "material" "BRICK/BRICK_FLOOR_02"
             "uaxis" "[1 0 0 0] 0.25"
-            "vaxis" "[0 0 -1 0] 0.25"
+            "vaxis" "[0 1 0 0] 0.25"
             "rotation" "0"
             "lightmapscale" "16"
             "smoothing_groups" "0"
@@ -239,10 +239,10 @@ world
         side
         {
             "id" "16"
-            "plane" "(6 2 0) (6 2 -1) (2 2 0)"
+            "plane" "(6 2 16) (6 2 0) (2 2 16)"
             "material" "BRICK/BRICK_FLOOR_02"
-            "uaxis" "[0 0 -1 0] 0.25"
-            "vaxis" "[-4 0 0 0] 0.25"
+            "uaxis" "[1 0 0 0] 0.25"
+            "vaxis" "[0 0 1 0] 0.25"
             "rotation" "0"
             "lightmapscale" "16"
             "smoothing_groups" "0"
@@ -251,10 +251,10 @@ world
         side
         {
             "id" "17"
-            "plane" "(2 2 0) (2 2 -1) (4 4 0)"
+            "plane" "(2 2 16) (2 2 0) (4 4 16)"
             "material" "BRICK/BRICK_FLOOR_02"
-            "uaxis" "[0 0 -1 0] 0.25"
-            "vaxis" "[2 2 0 0] 0.25"
+            "uaxis" "[0 1 0 0] 0.25"
+            "vaxis" "[0 0 1 0] 0.25"
             "rotation" "0"
             "lightmapscale" "16"
             "smoothing_groups" "0"
@@ -263,10 +263,10 @@ world
         side
         {
             "id" "18"
-            "plane" "(4 4 0) (4 4 -1) (6 2 0)"
+            "plane" "(4 4 16) (4 4 0) (6 2 16)"
             "material" "BRICK/BRICK_FLOOR_02"
-            "uaxis" "[0 0 -1 0] 0.25"
-            "vaxis" "[2 -2 0 0] 0.25"
+            "uaxis" "[0 1 0 0] 0.25"
+            "vaxis" "[0 0 1 0] 0.25"
             "rotation" "0"
             "lightmapscale" "16"
             "smoothing_groups" "0"
@@ -275,10 +275,10 @@ world
         side
         {
             "id" "19"
-            "plane" "(0 16 0) (1 16 0) (0 16 -1)"
+            "plane" "(4 4 16) (2 2 16) (6 2 16)"
             "material" "BRICK/BRICK_FLOOR_02"
             "uaxis" "[1 0 0 0] 0.25"
-            "vaxis" "[0 0 -1 0] 0.25"
+            "vaxis" "[0 1 0 0] 0.25"
             "rotation" "0"
             "lightmapscale" "16"
             "smoothing_groups" "0"
@@ -287,10 +287,10 @@ world
         side
         {
             "id" "20"
-            "plane" "(0 0 0) (1 0 0) (0 0 -1)"
+            "plane" "(6 2 0) (2 2 0) (4 4 0)"
             "material" "BRICK/BRICK_FLOOR_02"
             "uaxis" "[1 0 0 0] 0.25"
-            "vaxis" "[0 0 -1 0] 0.25"
+            "vaxis" "[0 1 0 0] 0.25"
             "rotation" "0"
             "lightmapscale" "16"
             "smoothing_groups" "0"
@@ -311,10 +311,10 @@ world
         side
         {
             "id" "21"
-            "plane" "(6 2 0) (6 2 -1) (4 4 0)"
+            "plane" "(6 2 16) (6 2 0) (4 4 16)"
             "material" "BRICK/BRICK_FLOOR_02"
-            "uaxis" "[0 0 -1 0] 0.25"
-            "vaxis" "[-2 2 0 0] 0.25"
+            "uaxis" "[0 1 0 0] 0.25"
+            "vaxis" "[0 0 1 0] 0.25"
             "rotation" "0"
             "lightmapscale" "16"
             "smoothing_groups" "0"
@@ -323,10 +323,10 @@ world
         side
         {
             "id" "22"
-            "plane" "(4 4 0) (4 4 -1) (4 6 0)"
+            "plane" "(4 4 16) (4 4 0) (4 6 16)"
             "material" "BRICK/BRICK_FLOOR_02"
-            "uaxis" "[0 0 -1 0] 0.25"
-            "vaxis" "[0 2 0 0] 0.25"
+            "uaxis" "[0 1 0 0] 0.25"
+            "vaxis" "[0 0 1 0] 0.25"
             "rotation" "0"
             "lightmapscale" "16"
             "smoothing_groups" "0"
@@ -335,10 +335,10 @@ world
         side
         {
             "id" "23"
-            "plane" "(4 6 0) (4 6 -1) (6 2 0)"
+            "plane" "(4 6 16) (4 6 0) (6 2 16)"
             "material" "BRICK/BRICK_FLOOR_02"
-            "uaxis" "[0 0 -1 0] 0.25"
-            "vaxis" "[2 -4 0 0] 0.25"
+            "uaxis" "[0 1 0 0] 0.25"
+            "vaxis" "[0 0 1 0] 0.25"
             "rotation" "0"
             "lightmapscale" "16"
             "smoothing_groups" "0"
@@ -347,10 +347,10 @@ world
         side
         {
             "id" "24"
-            "plane" "(0 16 0) (1 16 0) (0 16 -1)"
+            "plane" "(4 6 16) (4 4 16) (6 2 16)"
             "material" "BRICK/BRICK_FLOOR_02"
             "uaxis" "[1 0 0 0] 0.25"
-            "vaxis" "[0 0 -1 0] 0.25"
+            "vaxis" "[0 1 0 0] 0.25"
             "rotation" "0"
             "lightmapscale" "16"
             "smoothing_groups" "0"
@@ -359,10 +359,10 @@ world
         side
         {
             "id" "25"
-            "plane" "(0 0 0) (1 0 0) (0 0 -1)"
+            "plane" "(6 2 0) (4 4 0) (4 6 0)"
             "material" "BRICK/BRICK_FLOOR_02"
             "uaxis" "[1 0 0 0] 0.25"
-            "vaxis" "[0 0 -1 0] 0.25"
+            "vaxis" "[0 1 0 0] 0.25"
             "rotation" "0"
             "lightmapscale" "16"
             "smoothing_groups" "0"

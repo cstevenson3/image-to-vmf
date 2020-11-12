@@ -58,6 +58,8 @@ def generate_map(config, geometry):
     """ Take image geometry and generate a map """
     floors = []
     for segment in geometry.segments.values():
+        if segment.label.v == 0:
+            continue
         floor = Floor()
         floor.border = segment.border
         floor.top = 16

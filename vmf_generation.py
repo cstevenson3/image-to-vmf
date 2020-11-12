@@ -246,6 +246,16 @@ class Editor(VMFObject):
 def generate_uv_axes(plane):
     u = vector.subtract(plane[1], plane[0])
     v = vector.subtract(plane[2], plane[0])
+    absent = [(0 if u[i] == 0 and v[i] == 0 else 1) for i in range(3)]
+    absent_axis = sum([i for i in range(3) if absent[i] == 0])
+    available_axes = [0, 1, 2]
+    available_axes.remove(absent_axis)
+
+    u = [0 for i in range(3)]
+    u[available_axes[0]] = 1
+
+    v = [0 for i in range(3)]
+    v[available_axes[1]] = 1
 
     u = list(u)
     u.append(0)
@@ -285,7 +295,7 @@ class Side(VMFObject):
         return []
 
 def is_cc(a, b, c):
-    val = vector.cross(vector.subtract(c, a), vector.subtract(b, a))
+    val = vector.cross(vector.subtract(b, a), vector.subtract(c, a))
     if val == 0:
         return None
     return val > 0
@@ -368,14 +378,19 @@ def generate_floor_brushes(floor):
     brushes = []
     vertices = floor.border.vertices
     triangles = triangulate(vertices)
+    # make sure all are cc
+    for i in range(len(triangles)):
+        if not is_cc(*(triangles[i])):
+            triangles[i].reverse()
     add_z_dimension(triangles)
     # one brush per triangle
     for triangle in triangles:
-        top_plane = [(0,floor.top,0), (1,floor.top,0), (0,floor.top,-1)]  # y=floor.top, arbitrary x,z
-        bottom_plane = [(0,floor.bottom,0), (1,floor.bottom,0), (0,floor.bottom,-1)]  # y=floor.bottom, arbitrary x,z
+        top_plane = [(triangle[i][0],triangle[i][1],floor.top) for i in range(3)]
+        top_plane.reverse()  # make it cc from the bottom
+        bottom_plane = [(triangle[i][0],triangle[i][1],floor.bottom) for i in range(3)]
         side_planes = []
         for i in range(3):
-            side_plane = [triangle[i], vector.subtract(triangle[i], (0,0,1)), triangle[(i + 1) % 3]]
+            side_plane = [(triangle[i][0],triangle[i][1],floor.top), (triangle[i][0],triangle[i][1],floor.bottom), (triangle[(i + 1) % 3][0],triangle[(i + 1) % 3][1],floor.top)]
             side_planes.append(side_plane)
         planes = side_planes
         planes.append(top_plane)

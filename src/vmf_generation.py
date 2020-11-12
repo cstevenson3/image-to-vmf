@@ -295,34 +295,17 @@ class Side(VMFObject):
     def children(self):
         return []
 
-def can_connect(vertices, i1, i2):
-    p1 = vertices[i1]
-    p2 = vertices[i2]
-    # check connecting line would start and end inside polygon
-    if not is_cc(p1, vertices[(i1 + 1) % len(vertices)], p2):
-        return False
-    if not is_cc(p1, p2, vertices[(i1 - 1) % len(vertices)]):
-        return False
-    if not is_cc(p2, vertices[(i2 + 1) % len(vertices)], p1):
-        return False
-    if not is_cc(p2, p1, vertices[(i2 - 1) % len(vertices)]):
-        return False
 
-    # check connecting line would not cross another line segment
-    for i in range(len(vertices)):
-        if i == i1 or ((i + 1) % len(vertices)) == i1 or i == i2 or ((i + 1) % len(vertices)) == i2:
-            # special case checked previously
-            continue
-        q1 = vertices[i]
-        q2 = vertices[i % len(vertices)]
-        if is_intersect(p1, p2, q1, q2):
-            return False
-        
-    return True
-
-def triangulate(vertices, indices=[i for i in range(len(vertices))]):
+def triangulate(vertices, next_indices=None):
     ''' Triangulate a counter-clockwise polygon 
     into counter-clockwise triangles. Returns indices '''
+    # trick to avoid messing up the default arg
+    indices = None
+    if next_indices is None:
+        indices = [i for i in range(len(vertices))]
+    else:
+        indices = next_indices[:]
+
     if len(indices) == 3:
         return [list(indices)]
     
@@ -342,9 +325,9 @@ def triangulate(vertices, indices=[i for i in range(len(vertices))]):
                 j_0 = indices[j]
                 j_1 = indices[(j + 1) % len(indices)]
                 other_line = (vertices[j_0], vertices[j_1])
-                line_0_intersect = is_intersect(line_0, other_line)
-                line_1_intersect = is_intersect(line_1, other_line)
-                line_2_intersect = is_intersect(line_2, other_line)
+                line_0_intersect = segments_intersect(line_0, other_line)
+                line_1_intersect = segments_intersect(line_1, other_line)
+                line_2_intersect = segments_intersect(line_2, other_line)
                 if line_0_intersect or line_1_intersect or line_2_intersect:
                     no_self_intersection = False
                     break
@@ -353,23 +336,14 @@ def triangulate(vertices, indices=[i for i in range(len(vertices))]):
                 next_indices = indices[:]
                 next_indices.pop((i + 1) % len(indices))
                 other_triangles = triangulate(vertices, next_indices)
-                return [chosen_triangle] + other_triangles
+                return [[index_0, index_1, index_2]] + other_triangles
 
     raise AssertionError("Polygon should be CCW")
-
 
 def add_z_dimension(triangles):
     for i in range(len(triangles)):
         for v in range(3):
             triangles[i][v] = (triangles[i][v][0], triangles[i][v][1], 0)
-
-def build_object(segment):
-    color_to_content = {}
-    color_to_content[(0, 0, 0, 255)] = Floor
-    color_to_content[(0, 255, 0, 255)] = Floor
-    typ = color_to_content[segment.label]
-    floor = typ(segment)
-    return floor
 
 def generate_floor_brushes(floor):
     brushes = []

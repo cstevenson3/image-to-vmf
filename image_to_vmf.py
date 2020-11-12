@@ -39,8 +39,8 @@ def import_image(filepath):
     return image
 
 def main(args):
-    config = import_config("tests/config.json")
-    image = import_image("tests/example.png")
+    config = import_config("tests/test_data/config.json")
+    image = import_image("tests/test_data/example.png")
 
     geometry = process_geometry(config, image)
 

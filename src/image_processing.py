@@ -281,7 +281,7 @@ def process_geometry(config, image):
     segments = image_segmentation(image)
     for segment in segments:
         segment.generate_border()
-        segment.refine_border(0.1)
+        segment.refine_border(0.01)
     geometry = Geometry()
     for segment in segments:
         geometry.segments[segment.id] = segment

@@ -44,7 +44,7 @@ def import_image(filepath):
 
 def main(args):
     config = import_config("tests/test_data/config.json")
-    image = import_image("tests/test_data/example.png")
+    image = import_image("tests/test_data/squiggle2.png")
 
     geometry = process_geometry(config, image)
 

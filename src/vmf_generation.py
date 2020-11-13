@@ -350,11 +350,13 @@ def generate_floor_brushes(floor):
     # one brush per triangle
     for triangle in triangles:
         top_plane = [(triangle[i][0],triangle[i][1],floor.top) for i in range(3)]
-        top_plane.reverse()  # make it cc from the bottom
+        top_plane.reverse()  # make it clockwise from the top
         bottom_plane = [(triangle[i][0],triangle[i][1],floor.bottom) for i in range(3)]
         side_planes = []
         for i in range(3):
-            side_plane = [(triangle[i][0],triangle[i][1],floor.top), (triangle[i][0],triangle[i][1],floor.bottom), (triangle[(i + 1) % 3][0],triangle[(i + 1) % 3][1],floor.top)]
+            vertex_1 = triangle[i]
+            vertex_2 = triangle[(i - 1) % 3]
+            side_plane = [(vertex_1[0],vertex_1[1],floor.top), (vertex_1[0],vertex_1[1],floor.bottom), (vertex_2[0],vertex_2[1],floor.top)]
             side_planes.append(side_plane)
         planes = side_planes
         planes.append(top_plane)

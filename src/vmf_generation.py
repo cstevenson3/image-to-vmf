@@ -323,6 +323,10 @@ def triangulate(vertices, next_indices=None):
                 if line_0_intersect or line_1_intersect or line_2_intersect:
                     no_self_intersection = False
                     break
+            for point in vertices:
+                if point_in_triangle(point, triangle):
+                    no_self_intersection = False
+                    break
             if no_self_intersection:
                 chosen_triangle = triangle
                 next_indices = indices[:]

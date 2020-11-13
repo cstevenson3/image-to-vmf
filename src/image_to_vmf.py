@@ -36,6 +36,8 @@ def import_image(filepath):
             r, g, b = (row[4 * x], row[4 * x + 1], row[4 * x + 2])
             r, g, b = (float(r) / 255, float(g) / 255, float(b) / 255)
             h, s, v = colorsys.rgb_to_hsv(r, g, b)
+            # TODO, could convert back to integer values 
+            # to ensure equality comparisons work
             color = ColorHSV(h, s, v)
             image[(height - 1) - y][x] = Pixel(color)
     return image

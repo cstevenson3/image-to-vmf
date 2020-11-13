@@ -212,6 +212,7 @@ class ImageSegment:
             # exit condition
             if pixel == starting_pixel and direction == starting_direction:
                 break
+        self._border.vertices.reverse()
 
     def refine_border(self, tolerance):
         area = len(self._pixels)  # since each pixel is area 1

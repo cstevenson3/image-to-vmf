@@ -17,7 +17,9 @@ class Config:
         self.color_mappings = {}  # key ColorHSV, value SegmentType
 
     def __init__(self, json):
-        pass
+        self.color_mappings = {}
+        for key in json["color_mappings"].keys():
+            self.color_mappings[key] = ColorHSV(*json["color_mappings"][key])
 
 def import_config(filepath):
     f = open(filepath)
@@ -44,7 +46,7 @@ def import_image(filepath):
 
 def main(args):
     config = import_config("tests/test_data/config.json")
-    image = import_image("tests/test_data/squiggle2.png")
+    image = import_image("tests/test_data/various_shapes.png")
 
     geometry = process_geometry(config, image)
 

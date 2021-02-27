@@ -21,7 +21,13 @@ class Geometry:
 
 class ColorHSV(namedtuple('ColorHSV', 'h s v')):
     ''' HSV/HSB color format: hue, saturation, and brightness '''
-    pass
+
+    @staticmethod
+    def almost_equal(chsv1, chsv2, threshold=0.05):
+        h = abs((chsv1.h - chsv2.h + threshold) % 360 - threshold) < threshold
+        s = abs(chsv1.s - chsv2.s) < threshold
+        v = abs(chsv1.v - chsv2.v) < threshold
+        return h and s and v
 
 class Pixel:
     def __init__(self, color):

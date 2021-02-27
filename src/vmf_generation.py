@@ -31,6 +31,7 @@ def vmf_value_format(value, outer=True):
     return value_str
 
 class VMFObject:
+    id = 1
     def __init__(self):
         pass
 
@@ -143,11 +144,10 @@ class ViewSettings(VMFObject):
         return []
 
 class World(VMFObject):
-    id = 1
     def __init__(self):
         VMFObject.__init__(self)
-        self._id = World.id
-        World.id += 1
+        self._id = VMFObject.id
+        VMFObject.id += 1
         self.solids = []
         self._hiddens = []
         self._groups = []
@@ -199,11 +199,10 @@ class Cordon(VMFObject):
         return {"active": 0}
 
 class Brush(VMFObject):
-    id = 1
     def __init__(self, sides):
         VMFObject.__init__(self)
-        self._id = Brush.id
-        Brush.id += 1
+        self._id = VMFObject.id
+        VMFObject.id += 1
         self._sides = sides
 
     @property
@@ -221,6 +220,7 @@ class Brush(VMFObject):
 class Editor(VMFObject):
     def __init__(self):
         VMFObject.__init__(self)
+        self._color = (0, 243, 144)
 
     @property
     def label(self):
@@ -228,13 +228,36 @@ class Editor(VMFObject):
 
     @property
     def properties(self):
-        return {"color": (0, 243, 144),
+        return {"color": self._color,
                 "visgroupshown": 1,
                 "visgroupautoshown": 1}
 
     @property
     def children(self):
         return []
+
+class Bombsite(VMFObject):
+    def __init__(self):
+        VMFObject.__init__(self)
+        self._id = VMFObject.id
+        VMFObject.id += 1
+        self._editor = Editor()
+        self._editor._color = (220, 30, 220)
+        self._solids = []
+
+    @property
+    def label(self):
+        return "entity"
+
+    @property
+    def properties(self):
+        return {"id": self._id,
+                "classname": "func_bomb_target",
+                "heistbomb": 0}
+
+    @property
+    def children(self):
+        return self._solids + [Editor()]
 
 def generate_uv_axes(plane):
     u = vector.subtract(plane[1], plane[0])
@@ -373,11 +396,23 @@ def generate_floor_brushes(floor):
 def generate_vmf_body(config, map):
     ''' Take a map and generate a valve map file object '''
     brushes = []
+    entities = []
     for floor in map.floors:
         floor_brushes = generate_floor_brushes(floor)
         brushes += floor_brushes
+    for wall in map.walls:
+        wall_brushes = generate_floor_brushes(wall)  # same method should work for walls
+        brushes += wall_brushes
+    for bombsite in map.bombsites:
+        bombsite_brushes = generate_floor_brushes(bombsite)
+        bomb = Bombsite()
+        for brush in bombsite_brushes:
+            bomb._solids.append(brush)
+        entities.append(bomb)
+
     world = World()
     world.solids = brushes
     vmf_body = VMFBody()
     vmf_body.world = world
+    vmf_body._entities = entities
     return vmf_body

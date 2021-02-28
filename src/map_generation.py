@@ -15,21 +15,29 @@ class Floor:
 
 class Wall:
     def __init__(self):
-        self._border = [] # list of Vec
-        self._bottom = 0.0
-        self._top = 50.0
+        self.border = [] # list of Vec
+        self.bottom = 0.0
+        self.top = 50.0
 
 class Bombsite:
     def __init__(self):
-        self._border = [] # list of Vec
-        self._bottom = 0.0
-        self._top = 128.0
+        self.border = [] # list of Vec
+        self.bottom = 0.0
+        self.top = 128.0
+
+class Spawn:
+    def __init__(self):
+        self.border = [] # list of Vec
+        self.bottom = 0.0
+        self.top = 128.0
+        self.team = "T" # T or CT
 
 def generate_map(config, geometry):
     """ Take image geometry and generate a map """
     floors = []
     walls = []
     bombsites = []
+    spawns = []
     for segment in geometry.segments.values():
         if segment.label.v == 0: # black segments
             continue
@@ -54,8 +62,25 @@ def generate_map(config, geometry):
             bombsite.bottom = 0
             bombsites.append(bombsite)
             continue
+        if ColorHSV.almost_equal(segment.label, config.color_mappings["t_spawn"], threshold=0.01):
+            spawn = Spawn()
+            spawn.border = segment.border.vertices
+            spawn.top = 256
+            spawn.bottom = 0
+            spawn.team = "T"
+            spawns.append(spawn)
+            continue
+        if ColorHSV.almost_equal(segment.label, config.color_mappings["ct_spawn"], threshold=0.01):
+            spawn = Spawn()
+            spawn.border = segment.border.vertices
+            spawn.top = 256
+            spawn.bottom = 0
+            spawn.team = "CT"
+            spawns.append(spawn)
+            continue
     map = Map()
     map.floors = floors
     map.walls = walls
     map.bombsites = bombsites
+    map.spawns = spawns
     return map

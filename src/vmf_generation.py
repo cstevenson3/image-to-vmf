@@ -217,6 +217,11 @@ class Brush(VMFObject):
     def children(self):
         return self._sides + [Editor()]
 
+    def set_material(self, material):
+        ''' material is a string e.g. "BRICK/BRICK_FLOOR_02" '''
+        for side in self._sides:
+            side._material = material
+
 class Editor(VMFObject):
     def __init__(self):
         VMFObject.__init__(self)
@@ -259,6 +264,30 @@ class Bombsite(VMFObject):
     def children(self):
         return self._solids + [Editor()]
 
+class Spawn(VMFObject):
+    def __init__(self):
+        VMFObject.__init__(self)
+        self._id = VMFObject.id
+        VMFObject.id += 1
+        self._editor = Editor()
+        self._editor._color = (220, 30, 220)
+        self._solids = []
+        self._team_num = 2  # 2 for T, 3 for CT
+
+    @property
+    def label(self):
+        return "entity"
+
+    @property
+    def properties(self):
+        return {"id": self._id,
+                "classname": "func_buyzone",
+                "TeamNum": self._team_num}
+
+    @property
+    def children(self):
+        return self._solids + [Editor()]
+
 def generate_uv_axes(plane):
     u = vector.subtract(plane[1], plane[0])
     v = vector.subtract(plane[2], plane[0])
@@ -290,6 +319,7 @@ class Side(VMFObject):
         Side.id += 1
         self._plane = plane
         self._uaxis, self._vaxis = generate_uv_axes(plane)
+        self._material = "BRICK/BRICK_FLOOR_02"
 
     @property
     def label(self):
@@ -299,7 +329,7 @@ class Side(VMFObject):
     def properties(self):
         return {"id": self._id,
                 "plane": self._plane,
-                "material": "BRICK/BRICK_FLOOR_02",
+                "material": self._material,
                 "uaxis": self._uaxis,
                 "vaxis": self._vaxis,
                 "rotation": "0",
@@ -407,8 +437,17 @@ def generate_vmf_body(config, map):
         bombsite_brushes = generate_floor_brushes(bombsite)
         bomb = Bombsite()
         for brush in bombsite_brushes:
+            brush.set_material("TOOLS/TOOLSNODRAW")
             bomb._solids.append(brush)
         entities.append(bomb)
+    for spawn in map.spawns:
+        spawn_brushes = generate_floor_brushes(spawn)
+        spaw = Spawn()
+        spaw._team_num = 2 if spawn.team == "T" else 3  # 2 for T, 3 for CT
+        for brush in spawn_brushes:
+            brush.set_material("TOOLS/TOOLSNODRAW")
+            spaw._solids.append(brush)
+        entities.append(spaw)
 
     world = World()
     world.solids = brushes

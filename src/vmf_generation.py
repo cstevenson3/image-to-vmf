@@ -93,9 +93,13 @@ def generate_vmf_body(config, map):
     entities = []
     for floor in map.floors:
         floor_brushes = generate_floor_brushes(floor)
+        if floor.material != None:
+            [brush.set_material(floor.material) for brush in floor_brushes]
         brushes += floor_brushes
     for wall in map.walls:
         wall_brushes = generate_floor_brushes(wall)  # same method should work for walls
+        if wall.material != None:
+            [brush.set_material(wall.material) for brush in wall_brushes]
         brushes += wall_brushes
     for bombsite in map.bombsites:
         bombsite_brushes = generate_floor_brushes(bombsite)

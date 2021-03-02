@@ -14,12 +14,14 @@ class Floor:
         self.border = []  # list of Vec
         self.bottom = 0.0
         self.top = 4.0
+        self.material = None
 
 class Wall:
     def __init__(self):
         self.border = [] # list of Vec
         self.bottom = 0.0
         self.top = 50.0
+        self.material = None
 
 class Bombsite:
     def __init__(self):
@@ -55,12 +57,14 @@ def generate_map(config, geometry):
             floor.top = 0
             floor.bottom = -16
             floors.append(floor)
+            floor.material = "DEV/DEV_MEASUREGENERIC01B"
             continue
         if ColorHSV.almost_equal(segment.label, config.color_mappings["wall"], threshold=0.01):
             wall = Wall()
             wall.border = segment.border.vertices
             wall.top = 192
             wall.bottom = 0
+            wall.material = "DEV/DEV_MEASUREGENERIC01"
             walls.append(wall)
             continue
         if ColorHSV.almost_equal(segment.label, config.color_mappings["bombsite"], threshold=0.01):
@@ -74,6 +78,7 @@ def generate_map(config, geometry):
             floor.border = segment.border.vertices
             floor.top = 0
             floor.bottom = -16
+            floor.material = "PROPS/HAZARDSTRIP001A"
             floors.append(floor)
             continue
         if ColorHSV.almost_equal(segment.label, config.color_mappings["t_buyzone"], threshold=0.01) \

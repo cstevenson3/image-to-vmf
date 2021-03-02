@@ -69,6 +69,12 @@ def generate_map(config, geometry):
             bombsite.top = 256
             bombsite.bottom = 0
             bombsites.append(bombsite)
+
+            floor = Floor()
+            floor.border = segment.border.vertices
+            floor.top = 0
+            floor.bottom = -16
+            floors.append(floor)
             continue
         if ColorHSV.almost_equal(segment.label, config.color_mappings["t_buyzone"], threshold=0.01) \
         or ColorHSV.almost_equal(segment.label, config.color_mappings["ct_buyzone"], threshold=0.01):

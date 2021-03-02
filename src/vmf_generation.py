@@ -264,7 +264,7 @@ class Bombsite(VMFObject):
     def children(self):
         return self._solids + [Editor()]
 
-class Spawn(VMFObject):
+class Buyzone(VMFObject):
     def __init__(self):
         VMFObject.__init__(self)
         self._id = VMFObject.id
@@ -287,6 +287,32 @@ class Spawn(VMFObject):
     @property
     def children(self):
         return self._solids + [Editor()]
+
+class Spawn(VMFObject):
+    def __init__(self):
+        VMFObject.__init__(self)
+        self._id = VMFObject.id
+        VMFObject.id += 1
+        self._editor = Editor()
+        self._editor._color = (220, 30, 220)
+        self._classname = "info_player_terrorist"
+        self._origin = (0, 0, 0)
+
+    @property
+    def label(self):
+        return "entity"
+
+    @property
+    def properties(self):
+        return {"id": self._id,
+                "classname": self._classname,
+                "angles": (0, 0, 0),
+                "enabled": 1,
+                "origin": self._origin}
+
+    @property
+    def children(self):
+        return [Editor()]
 
 def generate_uv_axes(plane):
     u = vector.subtract(plane[1], plane[0])
@@ -440,15 +466,19 @@ def generate_vmf_body(config, map):
             brush.set_material("TOOLS/TOOLSNODRAW")
             bomb._solids.append(brush)
         entities.append(bomb)
-    for spawn in map.spawns:
-        spawn_brushes = generate_floor_brushes(spawn)
-        spaw = Spawn()
-        spaw._team_num = 2 if spawn.team == "T" else 3  # 2 for T, 3 for CT
-        for brush in spawn_brushes:
+    for buyzone in map.buyzones:
+        buyzone_brushes = generate_floor_brushes(buyzone)
+        buyz = Buyzone()
+        buyz._team_num = 2 if buyzone.team == "T" else 3  # 2 for T, 3 for CT
+        for brush in buyzone_brushes:
             brush.set_material("TOOLS/TOOLSNODRAW")
-            spaw._solids.append(brush)
+            buyz._solids.append(brush)
+        entities.append(buyz)
+    for spawn in map.spawns:
+        spaw = Spawn()
+        spaw._origin = spawn.origin
+        spaw._classname = "info_player_terrorist" if spawn.team == "T" else "info_player_counterterrorist"
         entities.append(spaw)
-
     world = World()
     world.solids = brushes
     vmf_body = VMFBody()

@@ -2,9 +2,11 @@ import sys
 from collections import namedtuple
 
 import png
+import drawSvg as draw
 
 import operator
 import vector
+
 
 class Geometry:
     def __init__(self):
@@ -110,6 +112,9 @@ class Image:
     def __iter__(self):
         return self._rows.__iter__()
 
+def one_pixel_apart(p1, p2):
+    return (p1[0] == p2[0] and abs(p1[1] - p2[1]) == 1) or (p1[1] == p2[1] and abs(p1[0] - p2[0]) == 1)
+
 class Border:
     def __init__(self, vertices):
         self._vertices = vertices
@@ -121,13 +126,41 @@ class Border:
         self._vertices.pop(vertex_index)
 
     def area_change_on_removing(self, vertex_index):
+        ''' negative for loss, positive for gain '''
         previous_vertex = self._vertices[(vertex_index - 1) % len(self._vertices)]
         vertex = self._vertices[vertex_index % len(self._vertices)]
         next_vertex = self._vertices[(vertex_index + 1) % len(self._vertices)]
-        area_change = abs(vector.cross(vector.subtract(previous_vertex, vertex), vector.subtract(next_vertex, vertex))) / float(2)
+        area_change = vector.cross(vector.subtract(previous_vertex, vertex), vector.subtract(next_vertex, vertex)) / float(2)
         return area_change
 
+
     def refine(self, tolerance):
+        # delete middle points along lines
+        i = 0
+        while(True):
+            n = len(self._vertices)
+            if i >= n:
+                break
+            a, b, c = (self._vertices[i], self._vertices[(i + 1) % n], self._vertices[(i + 2) % n])
+            if a[0] == b[0] == c[0] or a[1] == b[1] == c[1]:
+                self.remove((i + 1) % n)
+                continue
+            i += 1
+
+        # delete small corners
+        i = 0
+        while(True):
+            n = len(self._vertices)
+            if i >= n:
+                break
+            a, b, c = (self._vertices[i], self._vertices[(i + 1) % n], self._vertices[(i + 2) % n])
+            if one_pixel_apart(a, b) or one_pixel_apart(b, c):
+                if not vector.is_cc(a, b, c):
+                    self.remove((i + 1) % n)
+                    continue
+            i += 1
+        
+        # tolerance based cleaning
         proposed_removal_vertex_index = None
         proposed_area_change = 0
         while(proposed_area_change < tolerance):
@@ -139,7 +172,7 @@ class Border:
             best_area_change = float("inf")
             for index in range(len(self._vertices)):
                 area_change = self.area_change_on_removing(index)
-                if area_change < best_area_change:
+                if abs(area_change) < best_area_change and area_change >= 0:  # only remove concavities and small protusions
                     best_removal_vertex_index = index
                     best_area_change = area_change
             proposed_removal_vertex_index = best_removal_vertex_index
@@ -178,10 +211,34 @@ class ImageSegment:
         self._pixels = pixels
         self._border = Border([])
 
+    def pixel_in_grid(self, pixel):
+        return self._grid_of_pixels[pixel[1]][pixel[0]]
+
+    def bounds(self):
+        ''' return (smallest_x, smallest_y, largest_x, largest_y) '''
+        largest_x = 0
+        largest_y = 0
+        for pixel in self._pixels:
+            if pixel[0] > largest_x:
+                largest_x = pixel[0]
+            if pixel[1] > largest_y:
+                largest_y = pixel[1]
+        return (0, 0, largest_x, largest_y)
+
+    def generate_grid_of_pixels(self):
+        _, _, largest_x, largest_y = self.bounds()
+
+        self._grid_of_pixels = [[False for x in range(largest_x + 4)] for y in range(largest_y + 4)]  # 4 as margin of safety, not rigorous
+
+        for pixel in self._pixels:
+            self._grid_of_pixels[pixel[1]][pixel[0]] = True
+
     def generate_border(self):
+        self.generate_grid_of_pixels()
+
         starting_pixel = self._pixels[0]
         # find a pixel with a left border
-        while (starting_pixel[0] - 1, starting_pixel[1]) in self._pixels:
+        while self.pixel_in_grid((starting_pixel[0] - 1, starting_pixel[1])):
             starting_pixel = (starting_pixel[0] - 1, starting_pixel[1])
         starting_direction = (0, 1)
         
@@ -193,7 +250,7 @@ class ImageSegment:
                 pass
             right_hand = turn_right(direction)
             # if pixel to the right
-            if tuple(map(operator.add, pixel, right_hand)) in self._pixels:
+            if self.pixel_in_grid(tuple(map(operator.add, pixel, right_hand))):
                 # go there
                 direction = right_hand
                 pixel = tuple(map(operator.add, pixel, direction))
@@ -203,7 +260,7 @@ class ImageSegment:
                 # turn left whilst marking edge until can go straight
 
                 double_break = False
-                while tuple(map(operator.add, pixel, direction)) not in self._pixels:
+                while not self.pixel_in_grid(tuple(map(operator.add, pixel, direction))):
                     direction = turn_left(direction)
                     # exit
                     if pixel == starting_pixel and direction == starting_direction:
@@ -224,6 +281,22 @@ class ImageSegment:
         area = len(self._pixels)  # since each pixel is area 1
         absolute_tolerance = tolerance * area
         self._border.refine(absolute_tolerance)
+
+    def print_border(self, filename):
+        if(len(self.border.vertices) == 0):
+            return
+        _, _, largest_x, largest_y = self.bounds()
+        d = draw.Drawing(largest_x + 4, largest_y + 4, origin=(0, 0), displayInline=False)
+        v = self.border.vertices[:]
+        xys = []
+        for point in v:
+            xys.append(point[0])
+            xys.append(point[1])
+        d.append(draw.Lines(*xys,
+                        close=True,
+                        fill='#ee0000',
+                        stroke='black'))
+        d.saveSvg(filename)
 
     @property
     def id(self):
@@ -284,10 +357,16 @@ def image_segmentation(image):
     return segments
 
 def process_geometry(config, image):
+    print("----Segmenting Image...")
     segments = image_segmentation(image)
+    print("----Simplifying Borders...")
+    i = 0
     for segment in segments:
+        print("--------Simplifying Border...")
         segment.generate_border()
         segment.refine_border(0.01)
+        # segment.print_border(str(i) + ".svg")
+        i += 1
     geometry = Geometry()
     for segment in segments:
         geometry.segments[segment.id] = segment

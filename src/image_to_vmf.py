@@ -45,13 +45,21 @@ def import_image(filepath):
     return image
 
 def main(args):
-    config = import_config("tests/test_data/config.json")
-    image = import_image("tests/test_data/map1.png")
+    print("Importing Image...")
+    image = import_image("tests/test_data/map2.png")
 
+    config = import_config("tests/test_data/config.json")
+    config.skybox_x = image.width
+    config.skybox_y = image.height
+    config.skybox_z = 512
+
+    print("Processing Image...")
     geometry = process_geometry(config, image)
 
+    print("Generating Structures...")
     map = generate_map(config, geometry)
 
+    print("Building VMF...")
     vmf = VMF()
     vmf_body = generate_vmf_body(config, map)
     vmf_body.write(vmf)

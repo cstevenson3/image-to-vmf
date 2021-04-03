@@ -1,11 +1,12 @@
 import cv2
 import numpy as np
 
+#OCR
+import pytesseract
+from pytesseract import Output
+
 def import_image(filename):
     return cv2.imread(filename)
-
-def get_text(img):
-    pass
 
 def display(img):
     while True:
@@ -13,7 +14,20 @@ def display(img):
         if cv2.waitKey(1) & 0xFF == ord('q'):
                 break
 
-def find_edge_ends(bin_img):
+def get_text(img):
+    gray = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
+    invert = cv2.bitwise_not(gray)
+    invert_blur = cv2.GaussianBlur(invert, (11,11), 0)
+
+    adp_threshold = cv2.adaptiveThreshold(invert_blur, 255, cv2.ADAPTIVE_THRESH_GAUSSIAN_C, cv2.THRESH_BINARY, 11, 2)
+    adp_invert = cv2.bitwise_not(adp_threshold)
+
+    display(adp_invert)
+
+    d = pytesseract.image_to_data(adp_invert, output_type=Output.DICT)
+    print(d.keys())
+
+def find_edge_ends(bin_img, dilation_iterations = 1):
     ret, thresh = cv2.threshold(bin_img, 128, 255, cv2.THRESH_BINARY)
     # set white pixels to 10, black pixels to 0
     reshade_kernel = np.array([[10.0/255.0]])
@@ -33,46 +47,102 @@ def find_edge_ends(bin_img):
     edge_end_110 = cv2.filter2D(reshade, -1, edge_end_kernel)
     edge_end_thresh = cv2.inRange(edge_end_110, 109, 111)
 
-    display(edge_end_thresh)
+    kernel = np.ones((11,11), np.uint8)
+    dil = cv2.dilate(edge_end_thresh, kernel, iterations = dilation_iterations)
 
-def get_pixel_regions(img):
-    gray = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
-    invert = cv2.bitwise_not(gray)
-    
-    invert_blur = cv2.GaussianBlur(invert, (11,11), 0)
-    adp_threshold = cv2.adaptiveThreshold(invert_blur, 255, cv2.ADAPTIVE_THRESH_GAUSSIAN_C, cv2.THRESH_BINARY, 11, 2)
-    adp_invert = cv2.bitwise_not(adp_threshold)
-    kernel = np.ones((7,7), np.uint8)
-    adp_dil = cv2.dilate(adp_invert, kernel, iterations = 1)
-    adp_ero = cv2.erode(adp_dil, kernel, iterations = 1)
+    #display(dil)
 
+    return dil
+
+def adaptive_threshold(img, size=11):
+   adp = cv2.adaptiveThreshold(img, 255, cv2.ADAPTIVE_THRESH_GAUSSIAN_C, cv2.THRESH_BINARY, size, 2)
+
+   img = adp
+   return img
+
+def xy_edges(img):
     dx_kernel = 9 * np.array([[-1,0,1], [-1,0,1], [-1,0,1]])
-    dx_edges = cv2.filter2D(invert, -1, dx_kernel)
+    dx_edges = cv2.filter2D(img, -1, dx_kernel)
 
-    dy_kernel = 9 * np.array([[1,1,1], [0,0,0], [-1,-1,-1]])
-    dy_edges = cv2.filter2D(invert, -1, dy_kernel)
+    dy_kernel = np.transpose(dx_kernel)
+    dy_edges = cv2.filter2D(img, -1, dy_kernel)
 
     both_edges = cv2.addWeighted(dx_edges, 0.5, dy_edges, 0.5, 0)
+    
+    img = both_edges
+    return img
 
-    # length = 15
-    # long_x_kernel = 2 * np.array([[-1] * length, [-1] * length, [1] * length, [1] * length, [1] * length, [-1] * length, [-1] * length])
-    # long_x_edge = cv2.filter2D(invert, -1, long_x_kernel)
+def close(img, size=5, dilations=1, erosions=1):
+    kernel = np.ones((size, size), np.uint8)
+    dil = cv2.dilate(img, kernel, iterations = dilations)
+    ero = cv2.erode(dil, kernel, iterations = erosions)
+    
+    img = ero
+    return img
 
-    # long_y_kernel = np.transpose(long_x_kernel)
-    # long_y_edge = cv2.filter2D(invert, -1, long_y_kernel)
+def invert(img):
+    inverted = cv2.bitwise_not(img)
+    
+    img = inverted
+    return img
 
-    # both_edges = cv2.addWeighted(long_x_edge, 0.5, long_y_edge, 0.5, 0)
+def preprocess(img):
+    gray = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
+    inverted = invert(gray)
+    
+    img = inverted
+    return img
 
-    blur = cv2.GaussianBlur(both_edges, (11,11), 0)
-    ret, thresh_d = cv2.threshold(blur, 100, 255, cv2.THRESH_BINARY)
+def blur(img, size=11, iterations=1):
+    blurred = img
+    for i in range(iterations):
+        blurred = cv2.GaussianBlur(blurred, (size, size), 0)
+    
+    img = blurred
+    return img
 
-    kernel = np.ones((7,7), np.uint8)
-    dil = cv2.dilate(thresh_d, kernel, iterations = 2)
-    closed = cv2.erode(dil, kernel, iterations=2)
+def merge(img1, img2):
+    merged = cv2.bitwise_or(img1, img2)
+    
+    img = merged
+    return img
 
-    #find_edge_ends(closed)
+def find_contours(img):
+    contours, hierarchy = cv2.findContours(img, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE)
+    return contours
 
-    display(adp_threshold)
+def draw_contours(img, contours, min_size=2000):
+    contours_drawn = img.copy()
+    for contour in contours:
+        area = cv2.contourArea(contour)
+        if area < min_size:
+            continue
+        contours_drawn = cv2.drawContours(contours_drawn, [contour], -1, (0,0,255), 2)
+    return contours_drawn
+
+def flood_fill(img, seed_point, value):
+    mask = cv2.copyMakeBorder(img, 1, 1, 1, 1, cv2.BORDER_CONSTANT, 0)
+    _,result,_,_ = cv2.floodFill(img, mask, seed_point, value)
+    return result
+
+def fill_exterior(img):
+    seed = [10, 10]
+    while img[seed[1]][seed[0]] != 0:
+        seed[0] += 1
+        seed[1] += 1
+    return flood_fill(img, tuple(seed), 255)
+
+def get_pixel_regions(img):
+    pp = preprocess(img)
+    ppb = blur(pp)
+    adp = adaptive_threshold(ppb)
+    adp_inv = invert(adp)
+    adp_closed = close(adp_inv, dilations=2, erosions=1)
+    # filled_ex = fill_exterior(adp_closed)
+    # fex_inv = invert(filled_ex)
+    # c = find_contours(fex_inv)
+    # output = draw_contours(fex_inv, c)
+    display(adp_closed)
 
 def get_borders(img):
     gray = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
@@ -167,6 +237,7 @@ def get_borders(img):
 def main():
     ''' tests '''
     img = import_image("tests/test_data/sketch_scanned2.png")
+    #get_text(img)
     get_pixel_regions(img)
     #get_borders(img)
 

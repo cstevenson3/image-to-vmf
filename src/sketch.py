@@ -142,7 +142,7 @@ def get_pixel_regions(img):
     # fex_inv = invert(filled_ex)
     # c = find_contours(fex_inv)
     # output = draw_contours(fex_inv, c)
-    display(adp_closed)
+    return(adp_closed)
 
 def get_borders(img):
     gray = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
@@ -234,11 +234,51 @@ def get_borders(img):
     # erosion = cv2.erode(thres, kernel, iterations=3)
     display(output)
 
+def get_black_segments(img):
+    MIN_AREA = 10
+
+    result = img.copy()
+    height = len(image)
+    width = len(image[0])
+    for i in range(height):
+        for j in range(width):
+            # if unsegmented
+            if result[i][j] == 0:
+                seed_point = (j, i)
+                # flood fill with 128 to find segment points
+                result = flood_fill(result, seed_point, 128)
+                delete_segment = False
+                area = 0
+                for y in range(height):
+                    double_break = False
+                    for x in range(width):
+                        if result[y][x] == 128:
+                            # if segment touches border, remove it
+                            if (y == 0 or y == height - 1) or (x == 0 or x == width - 1):
+                                delete_segment = True
+                                double_break = True
+                                break
+                            area += 1
+                    if double_break:
+                        break
+                # if segment is too small (noise), remove it
+                if area < MIN_AREA:
+                    delete_segment = True
+                if delete_segment:
+                    flood_fill(result, seed_point, 255)
+                else:
+                    # confirm segment
+                    flood_fill(result, seed_point, 192)
+    return result
+                
+                
 def main():
     ''' tests '''
     img = import_image("tests/test_data/sketch_scanned2.png")
     #get_text(img)
-    get_pixel_regions(img)
+    pr = get_pixel_regions(img)
+    bs = get_black_segments(pr)
+    display(bs)
     #get_borders(img)
 
 if __name__ == "__main__":

@@ -13,9 +13,38 @@ def display(img):
         if cv2.waitKey(1) & 0xFF == ord('q'):
                 break
 
+def find_edge_ends(bin_img):
+    ret, thresh = cv2.threshold(bin_img, 128, 255, cv2.THRESH_BINARY)
+    # set white pixels to 10, black pixels to 0
+    reshade_kernel = np.array([[10.0/255.0]])
+    reshade = cv2.filter2D(thresh, -1, reshade_kernel)
+
+    # slow method for reshade
+    # for i in range(len(thresh)):
+    #     for j in range(len(thresh[0])):
+    #         if thresh[i][j] == 255:
+    #             thresh[i][j] = 10
+    #         else:
+    #             thresh[i][j] = 0
+
+    # convolve with kernel which gives 110 as output
+    # for white pixels with exactly one white neighbour
+    edge_end_kernel = np.array([[1, 1, 1], [1, 10, 1], [1, 1, 1]])
+    edge_end_110 = cv2.filter2D(reshade, -1, edge_end_kernel)
+    edge_end_thresh = cv2.inRange(edge_end_110, 109, 111)
+
+    display(edge_end_thresh)
+
 def get_pixel_regions(img):
     gray = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
     invert = cv2.bitwise_not(gray)
+    
+    invert_blur = cv2.GaussianBlur(invert, (11,11), 0)
+    adp_threshold = cv2.adaptiveThreshold(invert_blur, 255, cv2.ADAPTIVE_THRESH_GAUSSIAN_C, cv2.THRESH_BINARY, 11, 2)
+    adp_invert = cv2.bitwise_not(adp_threshold)
+    kernel = np.ones((7,7), np.uint8)
+    adp_dil = cv2.dilate(adp_invert, kernel, iterations = 1)
+    adp_ero = cv2.erode(adp_dil, kernel, iterations = 1)
 
     dx_kernel = 9 * np.array([[-1,0,1], [-1,0,1], [-1,0,1]])
     dx_edges = cv2.filter2D(invert, -1, dx_kernel)
@@ -39,9 +68,11 @@ def get_pixel_regions(img):
 
     kernel = np.ones((7,7), np.uint8)
     dil = cv2.dilate(thresh_d, kernel, iterations = 2)
-    closed = cv2.erode(dil, kernel, iterations=1)
+    closed = cv2.erode(dil, kernel, iterations=2)
 
-    display(closed)
+    #find_edge_ends(closed)
+
+    display(adp_threshold)
 
 def get_borders(img):
     gray = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)

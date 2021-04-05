@@ -1,3 +1,5 @@
+from time import sleep
+
 import cv2
 import numpy as np
 
@@ -9,10 +11,15 @@ def import_image(filename):
     return cv2.imread(filename)
 
 def display(img):
-    while True:
-        cv2.imshow('Output', img)
-        if cv2.waitKey(1) & 0xFF == ord('q'):
-                break
+    # cv2.namedWindow('Output', cv2.cv2.CV_WINDOW_AUTOSIZE)
+    # cv2.startWindowThread()
+    cv2.imshow('Output', img)
+    # while True:
+    if cv2.waitKey(0) & 0xFF == ord('q'):
+        cv2.destroyAllWindows()
+        cv2.waitKey(1)
+    sleep(1)
+    
 
 def get_text(img):
     gray = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
@@ -121,16 +128,21 @@ def draw_contours(img, contours, min_size=2000):
     return contours_drawn
 
 def flood_fill(img, seed_point, value):
-    mask = cv2.copyMakeBorder(img, 1, 1, 1, 1, cv2.BORDER_CONSTANT, 0)
-    _,result,_,_ = cv2.floodFill(img, mask, seed_point, value)
-    return result
+    ic = img.copy()
+    height = len(img)
+    width = len(img[0])
+    mask = np.zeros((height + 2, width + 2), dtype=np.uint8)
+    # mask = cv2.copyMakeBorder(img, 1, 1, 1, 1, cv2.BORDER_CONSTANT, 0)
+    _,result,_,rect = cv2.floodFill(ic, mask, seed_point, value, loDiff=0, upDiff=0)
+    return (result, rect)
 
 def fill_exterior(img):
     seed = [10, 10]
     while img[seed[1]][seed[0]] != 0:
         seed[0] += 1
         seed[1] += 1
-    return flood_fill(img, tuple(seed), 255)
+    result,_ = flood_fill(img, tuple(seed), 255)
+    return result
 
 def get_pixel_regions(img):
     pp = preprocess(img)
@@ -238,20 +250,21 @@ def get_black_segments(img):
     MIN_AREA = 10
 
     result = img.copy()
-    height = len(image)
-    width = len(image[0])
+    height = len(img)
+    width = len(img[0])
     for i in range(height):
         for j in range(width):
+            print(str(i) + " " + str(j))
             # if unsegmented
             if result[i][j] == 0:
                 seed_point = (j, i)
                 # flood fill with 128 to find segment points
-                result = flood_fill(result, seed_point, 128)
+                result, rect = flood_fill(result, seed_point, 128)
                 delete_segment = False
                 area = 0
-                for y in range(height):
+                for y in range(rect[1], rect[3] + 1):
                     double_break = False
-                    for x in range(width):
+                    for x in range(rect[0], rect[2] + 1):
                         if result[y][x] == 128:
                             # if segment touches border, remove it
                             if (y == 0 or y == height - 1) or (x == 0 or x == width - 1):
@@ -264,11 +277,13 @@ def get_black_segments(img):
                 # if segment is too small (noise), remove it
                 if area < MIN_AREA:
                     delete_segment = True
+
                 if delete_segment:
-                    flood_fill(result, seed_point, 255)
+                    result,_ = flood_fill(result, seed_point, 255)
                 else:
                     # confirm segment
-                    flood_fill(result, seed_point, 192)
+                    result,_ = flood_fill(result, seed_point, 192)
+                    display(result)
     return result
                 
                 

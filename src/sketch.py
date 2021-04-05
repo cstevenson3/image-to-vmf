@@ -11,10 +11,7 @@ def import_image(filename):
     return cv2.imread(filename)
 
 def display(img):
-    # cv2.namedWindow('Output', cv2.cv2.CV_WINDOW_AUTOSIZE)
-    # cv2.startWindowThread()
     cv2.imshow('Output', img)
-    # while True:
     if cv2.waitKey(0) & 0xFF == ord('q'):
         cv2.destroyAllWindows()
         cv2.waitKey(1)
@@ -254,17 +251,18 @@ def get_black_segments(img):
     width = len(img[0])
     for i in range(height):
         for j in range(width):
-            print(str(i) + " " + str(j))
+            #print(str(i) + " " + str(j))
             # if unsegmented
             if result[i][j] == 0:
                 seed_point = (j, i)
                 # flood fill with 128 to find segment points
                 result, rect = flood_fill(result, seed_point, 128)
+                print(rect)
                 delete_segment = False
                 area = 0
-                for y in range(rect[1], rect[3] + 1):
+                for y in range(rect[1], rect[1] + rect[3]):
                     double_break = False
-                    for x in range(rect[0], rect[2] + 1):
+                    for x in range(rect[0], rect[0] + rect[2]):
                         if result[y][x] == 128:
                             # if segment touches border, remove it
                             if (y == 0 or y == height - 1) or (x == 0 or x == width - 1):
@@ -277,13 +275,17 @@ def get_black_segments(img):
                 # if segment is too small (noise), remove it
                 if area < MIN_AREA:
                     delete_segment = True
+                else:
+                    pass
+                    #print()
 
                 if delete_segment:
                     result,_ = flood_fill(result, seed_point, 255)
+                    #print("Deleted segment with area " + str(area))
                 else:
                     # confirm segment
                     result,_ = flood_fill(result, seed_point, 192)
-                    display(result)
+                    #display(result)
     return result
                 
                 

@@ -244,7 +244,7 @@ def get_borders(img):
     display(output)
 
 def get_black_segments(img):
-    MIN_AREA = 10
+    MIN_AREA = 750
 
     result = img.copy()
     height = len(img)

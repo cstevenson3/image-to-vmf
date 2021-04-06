@@ -19,17 +19,20 @@ def display(img):
     
 
 def get_text(img):
-    gray = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
-    invert = cv2.bitwise_not(gray)
-    invert_blur = cv2.GaussianBlur(invert, (11,11), 0)
+    pp = preprocess(img)
+    b1 = blur(pp)
+    adp = adaptive_threshold(b1)
+    xy = xy_edges(b1)
+    b = blur(xy)
+    #c = close(b, size=11, dilations=1, erosions=1)
+    inv = invert(b)
+    t = threshold(inv, min=200)
+    #display(adp)
 
-    adp_threshold = cv2.adaptiveThreshold(invert_blur, 255, cv2.ADAPTIVE_THRESH_GAUSSIAN_C, cv2.THRESH_BINARY, 11, 2)
-    adp_invert = cv2.bitwise_not(adp_threshold)
-
-    display(adp_invert)
-
-    d = pytesseract.image_to_data(adp_invert, output_type=Output.DICT)
-    print(d.keys())
+    d = pytesseract.image_to_data(adp, output_type=Output.DICT)
+    astr = pytesseract.image_to_string(adp)
+    print(d["text"])
+    print(astr)
 
 def find_edge_ends(bin_img, dilation_iterations = 1):
     ret, thresh = cv2.threshold(bin_img, 128, 255, cv2.THRESH_BINARY)
@@ -57,6 +60,10 @@ def find_edge_ends(bin_img, dilation_iterations = 1):
     #display(dil)
 
     return dil
+
+def threshold(img, min=128):
+    ret, t = cv2.threshold(img, min, 255, cv2.THRESH_BINARY)
+    return t
 
 def adaptive_threshold(img, size=11):
    adp = cv2.adaptiveThreshold(img, 255, cv2.ADAPTIVE_THRESH_GAUSSIAN_C, cv2.THRESH_BINARY, size, 2)
@@ -244,7 +251,7 @@ def get_borders(img):
     display(output)
 
 def get_black_segments(img):
-    MIN_AREA = 750
+    MIN_AREA = 1000
 
     result = img.copy()
     height = len(img)
@@ -292,10 +299,11 @@ def get_black_segments(img):
 def main():
     ''' tests '''
     img = import_image("tests/test_data/sketch_scanned2.png")
-    #get_text(img)
-    pr = get_pixel_regions(img)
-    bs = get_black_segments(pr)
-    display(bs)
+    text_img = import_image("tests/test_data/sample_text.png")
+    get_text(text_img)
+    #pr = get_pixel_regions(img)
+    #bs = get_black_segments(pr)
+    #display(bs)
     #get_borders(img)
 
 if __name__ == "__main__":

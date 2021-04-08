@@ -75,9 +75,14 @@ def process_args():
     return args
 
 
+def load_image(path):
+    image = cv2.imread(path)
+    # image = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)
+    return image
+
+
 def prepare_image(image, width=320, height=320):
     # load the input image and grab the image dimensions
-    image = cv2.imread(image)
     image = cv2.GaussianBlur(image, (3, 3), 0)
     orig = image.copy()
     (origH, origW) = image.shape[:2]
@@ -176,12 +181,16 @@ def output_results(orig, results):
         cv2.imshow("Text Detection", output)
         cv2.waitKey(0)
 
+def run(image, east, width=320, height=320, min_confidence=0.5, padding=0):
+    image, orig, H, W, origH, origW, rH, rW = prepare_image(image, width, height)
+    rects, confidence, boxes = text_detection(image, east, min_confidence, H, W)
+    results = text_recognition(orig, boxes, padding, origH, origW, rH, rW)
+    output_results(orig, results)
+
 def main():
     args = process_args()
-    image, orig, H, W, origH, origW, rH, rW = prepare_image(args["image"], args["width"], args["height"])
-    rects, confidence, boxes = text_detection(image, args["east"], args["min_confidence"], H, W)
-    results = text_recognition(orig, boxes, args["padding"], origH, origW, rH, rW)
-    output_results(orig, results)
+    image = load_image(args["image"])
+    run(image, args["east"], args["width"], args["height"], args["min_confidence"], args["padding"])
 
 if __name__ == "__main__":
     main()

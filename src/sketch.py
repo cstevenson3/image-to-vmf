@@ -7,6 +7,8 @@ import numpy as np
 import pytesseract
 from pytesseract import Output
 
+import sketch_ocr
+
 def import_image(filename):
     return cv2.imread(filename)
 
@@ -28,11 +30,10 @@ def get_text(img):
     inv = invert(b)
     t = threshold(inv, min=200)
     #display(adp)
-
-    d = pytesseract.image_to_data(adp, output_type=Output.DICT)
-    astr = pytesseract.image_to_string(adp)
-    print(d["text"])
-    print(astr)
+    #display(t)
+    output = adp
+    rgb = cv2.cvtColor(output, cv2.COLOR_GRAY2RGB)
+    sketch_ocr.run(rgb, "frozen_east_text_detection.pb", min_confidence=0.01)
 
 def find_edge_ends(bin_img, dilation_iterations = 1):
     ret, thresh = cv2.threshold(bin_img, 128, 255, cv2.THRESH_BINARY)
@@ -299,7 +300,7 @@ def get_black_segments(img):
 def main():
     ''' tests '''
     img = import_image("tests/test_data/sketch_scanned2.png")
-    text_img = import_image("tests/test_data/sample_text.png")
+    text_img = import_image("tests/test_data/sketch_scanned2.png")
     get_text(text_img)
     #pr = get_pixel_regions(img)
     #bs = get_black_segments(pr)

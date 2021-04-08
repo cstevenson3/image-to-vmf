@@ -20,20 +20,96 @@ def display(img):
     sleep(1)
     
 
+def convolve_symbols(img, symbols, width=128, height=128):
+    image = img.copy()
+    image = gray(image)
+    image = invert(image)
+
+    shape = (width, height)
+    syms = []
+    for symbol in symbols:
+        sym = symbol.copy()
+        sym = gray(sym)
+        sym = cv2.resize(sym, shape)
+        sym = invert(sym)
+        sym = blur(sym, size=5)
+        syms.append(sym.copy())
+
+    merge_factor = 2
+    merged_symbol = syms[0].copy()
+    for sym in syms[1:]:
+        merged_symbol = cv2.addWeighted(merged_symbol, (merge_factor - 1) / merge_factor, sym, 1 / merge_factor, 0)
+        merge_factor += 1
+
+    width = len(merged_symbol[0])
+    height = len(merged_symbol)
+    kernel_nums = [[0 for x in range(width)] for y in range(height)]
+
+    for y in range(height):
+        for x in range(width):
+            kernel_nums[y][x] += merged_symbol[y][x]
+            
+    kernel = np.array(kernel_nums)
+    total = np.sum(kernel)
+    kernel = 1/total * kernel
+    av = np.average(kernel)
+    kernel = (kernel - av)
+    kernel = 2 * kernel
+
+    convolved = cv2.filter2D(image, -1, kernel)
+
+    return convolved
+
+def merge_all(images):
+    merge_factor = 2
+    merged_image = images[0].copy()
+    for img in images[1:]:
+        merged_image = cv2.addWeighted(merged_image, (merge_factor - 1) / merge_factor, img, 1 / merge_factor, 0)
+        merge_factor += 1
+    return merged_image
+
 def get_text(img):
-    pp = preprocess(img)
-    b1 = blur(pp)
-    adp = adaptive_threshold(b1)
-    xy = xy_edges(b1)
-    b = blur(xy)
-    #c = close(b, size=11, dilations=1, erosions=1)
-    inv = invert(b)
-    t = threshold(inv, min=200)
-    #display(adp)
-    #display(t)
-    output = adp
-    rgb = cv2.cvtColor(output, cv2.COLOR_GRAY2RGB)
-    sketch_ocr.run(rgb, "frozen_east_text_detection.pb", min_confidence=0.01)
+    symbol_paths = ["tests/test_data/A2.png", "tests/test_data/A3.png"]
+    symbols = [import_image(path) for path in symbol_paths]
+
+    ts = []
+
+    for width in range(32, 133, 8):
+        for height in range(64, 145, 8):
+            convolved = convolve_symbols(img, symbols, width=width, height=height)
+            t = threshold(convolved, min=40)
+            ts.append(t.copy())
+
+    T = merge_all(ts)
+    display(T)
+    print("here")
+
+    output = img.copy()
+    for y in range(len(output)):
+        print(y)
+        for x in range(len(output[0])):
+            if any([t[y][x] == 255 for t in ts]):
+                # B,G 0 if T = 255, no change otherwise
+                # R 255 if T = 255, no change otherwise
+                output[y][x][0] = output[y][x][0] * (1/255) * (255 - T[y][x])
+                output[y][x][1] = output[y][x][1] * (1/255) * (255 - T[y][x])
+                output[y][x][2] = output[y][x][2] + (255 - output[y][x][2]) * (1/255) * T[y][x]
+
+    display(output)
+
+    # pp = preprocess(img)
+    # b1 = blur(pp)
+    # adp = adaptive_threshold(b1)
+    # xy = xy_edges(b1)
+    # b = blur(xy)
+    # #c = close(b, size=11, dilations=1, erosions=1)
+    # inv = invert(b)
+    # t = threshold(inv, min=200)
+    # #display(adp)
+    # #display(t)
+    # output = adp
+    # rgb = cv2.cvtColor(output, cv2.COLOR_GRAY2RGB)
+    # sketch_ocr.run(rgb, "frozen_east_text_detection.pb", min_confidence=0.01)
 
 def find_edge_ends(bin_img, dilation_iterations = 1):
     ret, thresh = cv2.threshold(bin_img, 128, 255, cv2.THRESH_BINARY)
@@ -96,6 +172,10 @@ def invert(img):
     inverted = cv2.bitwise_not(img)
     
     img = inverted
+    return img
+
+def gray(img):
+    img = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
     return img
 
 def preprocess(img):
@@ -300,7 +380,7 @@ def get_black_segments(img):
 def main():
     ''' tests '''
     img = import_image("tests/test_data/sketch_scanned2.png")
-    text_img = import_image("tests/test_data/sketch_scanned2.png")
+    text_img = import_image("tests/test_data/sketch_scanned3.png")
     get_text(text_img)
     #pr = get_pixel_regions(img)
     #bs = get_black_segments(pr)

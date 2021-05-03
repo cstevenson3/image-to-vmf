@@ -81,19 +81,39 @@ def get_text(img):
             ts.append(t.copy())
 
     T = merge_all(ts)
-    display(T)
-    print("here")
+    blur(T)
+    thresh = threshold(T, 40)
+    display(thresh)
+
+    thresh_rgb = cv2.merge([thresh, thresh, thresh])
+    ctrs = find_contours(thresh)
+    segs = draw_contours(thresh_rgb, ctrs, min_size=0)
+    for ctr in ctrs:
+        x,y,w,h = cv2.boundingRect(ctr)
+        cx = int(x + w / 2)
+        cy = int(y + h / 2)
+        # M = cv2.moments(ctr)
+        # cx = int(M['m10']/M['m00'])
+        # cy = int(M['m01']/M['m00'])
+        print(cx, cy)
+        cv2.circle(segs, (cx, cy), 20, (0, 255, 0))
+    display(segs)
 
     output = img.copy()
-    for y in range(len(output)):
-        print(y)
-        for x in range(len(output[0])):
-            if any([t[y][x] == 255 for t in ts]):
-                # B,G 0 if T = 255, no change otherwise
-                # R 255 if T = 255, no change otherwise
-                output[y][x][0] = output[y][x][0] * (1/255) * (255 - T[y][x])
-                output[y][x][1] = output[y][x][1] * (1/255) * (255 - T[y][x])
-                output[y][x][2] = output[y][x][2] + (255 - output[y][x][2]) * (1/255) * T[y][x]
+    output = gray(output)
+    BG = cv2.subtract(output, T)
+    R = cv2.add(output, T)
+    output = cv2.merge([BG, BG, R])
+
+    # for y in range(len(output)):
+    #     print(y)
+    #     for x in range(len(output[0])):
+    #         if any([t[y][x] == 255 for t in ts]):
+    #             # B,G 0 if T = 255, no change otherwise
+    #             # R 255 if T = 255, no change otherwise
+    #             output[y][x][0] = output[y][x][0] * (1/255) * (255 - T[y][x])
+    #             output[y][x][1] = output[y][x][1] * (1/255) * (255 - T[y][x])
+    #             output[y][x][2] = output[y][x][2] + (255 - output[y][x][2]) * (1/255) * T[y][x]
 
     display(output)
 

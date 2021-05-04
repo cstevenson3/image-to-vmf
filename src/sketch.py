@@ -180,6 +180,9 @@ def find_edge_ends(bin_img, dilation_iterations = 1):
 
     return dil
 
+def gray_to_rgb(gray):
+    return cv2.merge([gray, gray, gray])
+
 def threshold(img, min=128):
     ret, t = cv2.threshold(img, min, 255, cv2.THRESH_BINARY)
     return t
@@ -421,18 +424,40 @@ def get_black_segments(img):
                 
 def main():
     ''' tests '''
-    img = import_image("tests/test_data/sketch_scanned2.png")
+    img = import_image("tests/test_data/sketch_scanned3.png")
     text_img = import_image("tests/test_data/sketch_scanned3.png")
     text_locations = get_text(text_img)
+    all_locs = []
     for key in text_locations.keys():
-        loc = text_locations[key]
-        for l in loc:
+        locs = text_locations[key]
+        for l in locs:
+            all_locs.append(l)
             cv2.circle(text_img, l, 10, (255, 0, 0), thickness=5)
-    display(text_img)
+    WIDTH = 90
+    HEIGHT = 90
+    for tl in all_locs:
+        left = int(tl[0] - WIDTH / 2)
+        right = int(tl[0] + WIDTH / 2)
+        top = int(tl[1] - HEIGHT / 2)
+        bottom = int(tl[1] + HEIGHT / 2)
+        cv2.rectangle(img, (left, top), (right, bottom), (255, 255, 255), thickness=-WIDTH)
+    display(img)
+    # display(text_img)
     # print(text_locations)
-    # pr = get_pixel_regions(img)
-    # bs = get_black_segments(pr)
-    # display(bs)
+
+    pr = get_pixel_regions(img)
+    bs = get_black_segments(pr)
+
+    bs_rgb = gray_to_rgb(bs)
+
+    COLORS = {"A": (0, 128, 255)}
+    for key in text_locations.keys():
+        locs = text_locations[key]
+        color = COLORS[key]
+        for l in locs:
+            bs_rgb,_ = flood_fill(bs_rgb, l, color)
+
+    display(bs_rgb)
     #get_borders(img)
 
 if __name__ == "__main__":

@@ -75,16 +75,17 @@ def get_symbol(img, symbol_paths):
 
     ts = []
 
+    THRESHOLD_MIN = 35
     for width in range(32, 133, 8):
         for height in range(64, 145, 8):
             convolved = convolve_symbols(img, symbols, width=width, height=height)
-            t = threshold(convolved, min=40)
+            t = threshold(convolved, min=THRESHOLD_MIN)
             ts.append(t.copy())
 
     T = merge_all(ts)
     blur(T)
     thresh = threshold(T, 40)
-    #display(thresh)
+    display(thresh)
 
     thresh_rgb = cv2.merge([thresh, thresh, thresh])
     ctrs = find_contours(thresh)
@@ -140,10 +141,9 @@ def get_symbol(img, symbol_paths):
 
     return mids
 
-def get_text(img):
+def get_text(img, texts = ["A"]):
     result = dict()
 
-    texts = ["A"]
     SYMBOL_PATH = "tests/test_data/symbols/"
     _, _, filenames = next(walk(SYMBOL_PATH))
     for t in texts:
@@ -390,7 +390,7 @@ def get_black_segments(img):
                 seed_point = (j, i)
                 # flood fill with 128 to find segment points
                 result, rect = flood_fill(result, seed_point, 128)
-                print(rect)
+                #print(rect)
                 delete_segment = False
                 area = 0
                 for y in range(rect[1], rect[1] + rect[3]):
@@ -436,9 +436,9 @@ def neighbour_colors(img, x, y):
                 
 def main():
     ''' tests '''
-    img = import_image("tests/test_data/sketch_scanned3.png")
-    text_img = import_image("tests/test_data/sketch_scanned3.png")
-    text_locations = get_text(text_img)
+    img = import_image("tests/test_data/sketch_scanned5.png")
+    text_img = import_image("tests/test_data/sketch_scanned5.png")
+    text_locations = get_text(text_img, texts = ["A", "B", "C", "F"])
     all_locs = []
     for key in text_locations.keys():
         locs = text_locations[key]
@@ -454,7 +454,7 @@ def main():
         bottom = int(tl[1] + HEIGHT / 2)
         cv2.rectangle(img, (left, top), (right, bottom), (255, 255, 255), thickness=-WIDTH)
     display(img)
-    # display(text_img)
+    display(text_img)
     # print(text_locations)
 
     pr = get_pixel_regions(img)
@@ -462,7 +462,7 @@ def main():
 
     bs_rgb = gray_to_rgb(bs)
 
-    COLORS = {"A": (0, 128, 255)}
+    COLORS = {"A": (0, 192, 255), "B": (0, 255, 255), "F": (0, 255, 0), "C": (255, 0, 0)}
     for key in text_locations.keys():
         locs = text_locations[key]
         color = COLORS[key]

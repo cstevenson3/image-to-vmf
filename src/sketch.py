@@ -1,4 +1,6 @@
 from time import sleep
+import math
+from os import walk
 
 import cv2
 import numpy as np
@@ -68,8 +70,7 @@ def merge_all(images):
         merge_factor += 1
     return merged_image
 
-def get_text(img):
-    symbol_paths = ["tests/test_data/A2.png", "tests/test_data/A3.png"]
+def get_symbol(img, symbol_paths):
     symbols = [import_image(path) for path in symbol_paths]
 
     ts = []
@@ -83,21 +84,19 @@ def get_text(img):
     T = merge_all(ts)
     blur(T)
     thresh = threshold(T, 40)
-    display(thresh)
+    #display(thresh)
 
     thresh_rgb = cv2.merge([thresh, thresh, thresh])
     ctrs = find_contours(thresh)
     segs = draw_contours(thresh_rgb, ctrs, min_size=0)
+    highlights = []
     for ctr in ctrs:
         x,y,w,h = cv2.boundingRect(ctr)
         cx = int(x + w / 2)
         cy = int(y + h / 2)
-        # M = cv2.moments(ctr)
-        # cx = int(M['m10']/M['m00'])
-        # cy = int(M['m01']/M['m00'])
-        print(cx, cy)
+        highlights.append((cx, cy))
         cv2.circle(segs, (cx, cy), 20, (0, 255, 0))
-    display(segs)
+    #display(segs)
 
     output = img.copy()
     output = gray(output)
@@ -105,31 +104,54 @@ def get_text(img):
     R = cv2.add(output, T)
     output = cv2.merge([BG, BG, R])
 
-    # for y in range(len(output)):
-    #     print(y)
-    #     for x in range(len(output[0])):
-    #         if any([t[y][x] == 255 for t in ts]):
-    #             # B,G 0 if T = 255, no change otherwise
-    #             # R 255 if T = 255, no change otherwise
-    #             output[y][x][0] = output[y][x][0] * (1/255) * (255 - T[y][x])
-    #             output[y][x][1] = output[y][x][1] * (1/255) * (255 - T[y][x])
-    #             output[y][x][2] = output[y][x][2] + (255 - output[y][x][2]) * (1/255) * T[y][x]
+    #display(output)
 
-    display(output)
+    MIN_DIST = 32
+    MAX_DIST = 256
+    MAX_ANG = 10 # degrees
 
-    # pp = preprocess(img)
-    # b1 = blur(pp)
-    # adp = adaptive_threshold(b1)
-    # xy = xy_edges(b1)
-    # b = blur(xy)
-    # #c = close(b, size=11, dilations=1, erosions=1)
-    # inv = invert(b)
-    # t = threshold(inv, min=200)
-    # #display(adp)
-    # #display(t)
-    # output = adp
-    # rgb = cv2.cvtColor(output, cv2.COLOR_GRAY2RGB)
-    # sketch_ocr.run(rgb, "frozen_east_text_detection.pb", min_confidence=0.01)
+    matches = []
+    # match highlights
+    last_changed = 0 # how many times has the list been cycled without a match
+    while len(highlights) > 0:
+        p1 = highlights.pop(0)
+        # look for a matching right
+        change = False
+        for i in range(len(highlights)):
+            p2 = highlights[i]
+            dx = p2[0] - p1[0]
+            dy = p2[1] - p1[1]
+            ang = math.degrees(math.atan(abs(dy) / abs(dx))) if dx != 0 else 90
+            if dx > MIN_DIST and dx < MAX_DIST and ang < MAX_ANG:
+                highlights.pop(i)
+                matches.append((p1, p2))
+                last_changed = 0
+                change = True
+                break
+        if not change:
+            highlights.append(p1) # cycle p1 to end of list
+            last_changed += 1
+            if last_changed > len(highlights): # all current options cycled through without a match
+                break
+
+    mids = [(int((match[0][0] + match[1][0]) / 2), int((match[0][1] + match[1][1]) / 2)) for match in matches]
+    [cv2.circle(segs, mid, 20, (255, 0, 0)) for mid in mids]
+    #display(segs)
+
+    return mids
+
+def get_text(img):
+    result = dict()
+
+    texts = ["A"]
+    SYMBOL_PATH = "tests/test_data/symbols/"
+    _, _, filenames = next(walk(SYMBOL_PATH))
+    for t in texts:
+        t_filepaths = [SYMBOL_PATH + fn for fn in filenames if fn.startswith(t)]
+        points = get_symbol(img, t_filepaths)
+        result[t] = points
+
+    return result
 
 def find_edge_ends(bin_img, dilation_iterations = 1):
     ret, thresh = cv2.threshold(bin_img, 128, 255, cv2.THRESH_BINARY)
@@ -401,10 +423,16 @@ def main():
     ''' tests '''
     img = import_image("tests/test_data/sketch_scanned2.png")
     text_img = import_image("tests/test_data/sketch_scanned3.png")
-    get_text(text_img)
-    #pr = get_pixel_regions(img)
-    #bs = get_black_segments(pr)
-    #display(bs)
+    text_locations = get_text(text_img)
+    for key in text_locations.keys():
+        loc = text_locations[key]
+        for l in loc:
+            cv2.circle(text_img, l, 10, (255, 0, 0), thickness=5)
+    display(text_img)
+    # print(text_locations)
+    # pr = get_pixel_regions(img)
+    # bs = get_black_segments(pr)
+    # display(bs)
     #get_borders(img)
 
 if __name__ == "__main__":

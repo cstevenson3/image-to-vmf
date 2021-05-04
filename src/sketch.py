@@ -420,7 +420,19 @@ def get_black_segments(img):
                     result,_ = flood_fill(result, seed_point, 192)
                     #display(result)
     return result
-                
+
+
+def neighbour_colors(img, x, y):
+    result = []
+    xys = []
+    ys = [max(y - 1, 0), y, min(len(img) - 1, y + 1)]
+    xs = [max(x - 1, 0), x, min(len(img[0]) - 1, x + 1)]
+    for y in ys:
+        for x in xs:
+            xys.append((x, y))
+    for xy in xys:
+        result.append(tuple(img[xy[1]][xy[0]]))
+    return result
                 
 def main():
     ''' tests '''
@@ -459,6 +471,23 @@ def main():
 
     display(bs_rgb)
     #get_borders(img)
+
+    PENCIL_THICKNESS = 10
+    UNKNOWN_COLORS = [(192, 192, 192), (255, 255, 255)]
+    cur_img = bs_rgb.copy()
+    next_img = cur_img.copy()
+    for passes in range(PENCIL_THICKNESS):
+        for y in range(len(cur_img)):
+            for x in range(len(cur_img[0])):
+                if tuple(cur_img[y][x]) in UNKNOWN_COLORS:
+                    ncs = neighbour_colors(cur_img, x, y)
+                    for nc in ncs:
+                        if nc not in UNKNOWN_COLORS:
+                            next_img[y][x] = nc
+                            break
+        cur_img = next_img.copy()
+    
+    display(cur_img)
 
 if __name__ == "__main__":
     main()

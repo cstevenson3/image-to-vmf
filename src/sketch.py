@@ -124,22 +124,22 @@ def get_symbol(img, symbol_paths):
     ts = []
 
     THRESHOLD_MIN = 170
-    for width in range(32, 133, 8):  # 32, 133
-        for height in range(50, 145, 8):  # 64, 145
+    for width in range(46, 56, 8):  # 32, 133
+        for height in range(60, 74, 8):  # 64, 145
             convolved = convolve_symbols(img, symbols, width=width, height=height)
             t = threshold(convolved, min=THRESHOLD_MIN)
             ts.append(t.copy())
 
     T = merge_all(ts)
     # T = combine_all(ts)
-    print("pre blur")
-    display(T)
+    # print("pre blur")
+    # display(T)
     T = blur(T)
-    print("post blur")
-    display(T)
-    print("final thresh")
+    # print("post blur")
+    # display(T)
+    # print("final thresh")
     thresh = threshold(T, 15)
-    display(thresh)
+    # display(thresh)
 
     thresh_rgb = cv2.merge([thresh, thresh, thresh])
     ctrs = find_contours(thresh)
@@ -541,17 +541,47 @@ def main():
     display(bs_rgb)
     #get_borders(img)
 
-    PENCIL_THICKNESS = 10
     UNKNOWN_COLORS = [(192, 192, 192), (255, 255, 255)]
+
+    for y in range(len(bs_rgb)):
+        for x in range(len(bs_rgb[0])):
+            if tuple(bs_rgb[y][x]) in UNKNOWN_COLORS:
+                bs_rgb[y][x] = (0, 0, 0)
+    
+    display(bs_rgb)
+
+    left = math.inf
+    right = 0
+    top = math.inf
+    right = 0
+    for y in range(len(bs_rgb)):
+        for x in range(len(bs_rgb[0])):
+            if tuple(bs_rgb[y][x]) != (0, 0, 0):
+                if x < left:
+                    left = x
+                if x > right:
+                    right = x
+                if y < top:
+                    top = y
+                if y > bottom:
+                    bottom = y
+    
+    # crop
+    bs_rgb = bs_rgb[top-2:bottom+2, left-2:right+2]
+
+    display(bs_rgb)
+
+    PENCIL_THICKNESS = 20
     cur_img = bs_rgb.copy()
     next_img = cur_img.copy()
     for passes in range(PENCIL_THICKNESS):
+        print("Pass {}".format(passes + 1))
         for y in range(len(cur_img)):
             for x in range(len(cur_img[0])):
-                if tuple(cur_img[y][x]) in UNKNOWN_COLORS:
+                if tuple(cur_img[y][x]) == (0, 0, 0):
                     ncs = neighbour_colors(cur_img, x, y)
                     for nc in ncs:
-                        if nc not in UNKNOWN_COLORS:
+                        if nc != (0, 0, 0):
                             next_img[y][x] = nc
                             break
         cur_img = next_img.copy()

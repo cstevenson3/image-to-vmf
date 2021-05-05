@@ -66,7 +66,9 @@ def convolve_symbols(img, symbols, width=128, height=128):
     total = np.sum(kernel)
     kernel = 1.0/total * kernel  # normalize
 
+    image = blur(image, size=5)
     image = threshold(image, 30)
+    merged_symbol = blur(merged_symbol, size=5)
     merged_symbol = threshold(merged_symbol, 30)
 
     matched = cv2.matchTemplate(image, merged_symbol, cv2.TM_SQDIFF)
@@ -121,17 +123,22 @@ def get_symbol(img, symbol_paths):
 
     ts = []
 
-    THRESHOLD_MIN = 160
+    THRESHOLD_MIN = 170
     for width in range(32, 133, 8):  # 32, 133
-        for height in range(48, 145, 8):  # 64, 145
+        for height in range(50, 145, 8):  # 64, 145
             convolved = convolve_symbols(img, symbols, width=width, height=height)
             t = threshold(convolved, min=THRESHOLD_MIN)
             ts.append(t.copy())
 
-    # T = merge_all(ts)
-    T = combine_all(ts)
-    blur(T)
-    thresh = threshold(T, 40)
+    T = merge_all(ts)
+    # T = combine_all(ts)
+    print("pre blur")
+    display(T)
+    T = blur(T)
+    print("post blur")
+    display(T)
+    print("final thresh")
+    thresh = threshold(T, 15)
     display(thresh)
 
     thresh_rgb = cv2.merge([thresh, thresh, thresh])
@@ -484,7 +491,7 @@ def neighbour_colors(img, x, y):
 
 def template_match_test():
     img = import_image("tests/test_data/sketch_scanned5.png")
-    template = import_image("tests/test_data/symbols/B1.png")
+    template = import_image("tests/test_data/symbols/A1.png")
     template = cv2.resize(template, (52, 74))
     matched = cv2.matchTemplate(img, template, cv2.TM_SQDIFF)
     largest = max([max(matched[y]) for y in range(len(matched))])
@@ -500,7 +507,7 @@ def main():
 
     img = import_image("tests/test_data/sketch_scanned5.png")
     text_img = import_image("tests/test_data/sketch_scanned5.png")
-    text_locations = get_text(text_img, texts = ["B", "A", "C", "F"])
+    text_locations = get_text(text_img, texts = ["B", "C", "F"])
     all_locs = []
     for key in text_locations.keys():
         locs = text_locations[key]

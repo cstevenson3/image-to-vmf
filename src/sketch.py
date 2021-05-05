@@ -124,8 +124,8 @@ def get_symbol(img, symbol_paths):
     ts = []
 
     THRESHOLD_MIN = 170
-    for width in range(46, 56, 8):  # 32, 133
-        for height in range(60, 74, 8):  # 64, 145
+    for width in range(28, 84, 8):  # 32, 133
+        for height in range(44, 74, 8):  # 64, 145
             convolved = convolve_symbols(img, symbols, width=width, height=height)
             t = threshold(convolved, min=THRESHOLD_MIN)
             ts.append(t.copy())
@@ -505,16 +505,17 @@ def main():
     ''' tests '''
     # template_match_test()
 
-    img = import_image("tests/test_data/sketch_scanned5.png")
-    text_img = import_image("tests/test_data/sketch_scanned5.png")
-    text_locations = get_text(text_img, texts = ["B", "C", "F"])
+    img = import_image("tests/test_data/sketch_scanned6.png")
+    text_img = import_image("tests/test_data/sketch_scanned6.png")
+    text_locations = get_text(text_img, texts = ["B", "C", "F", "T"])
     all_locs = []
     for key in text_locations.keys():
         locs = text_locations[key]
         for l in locs:
             all_locs.append(l)
-            cv2.circle(text_img, l, 10, (255, 0, 0), thickness=5)
-    WIDTH = 90
+            # cv2.circle(text_img, l, 10, (255, 0, 0), thickness=5)
+            text_img = cv2.putText(text_img, key, l, cv2.FONT_HERSHEY_SIMPLEX, 1, (255, 0, 0), 2, cv2.LINE_AA)
+    WIDTH = 80
     HEIGHT = 90
     for tl in all_locs:
         left = int(tl[0] - WIDTH / 2)
@@ -531,7 +532,7 @@ def main():
 
     bs_rgb = gray_to_rgb(bs)
 
-    COLORS = {"A": (0, 192, 255), "B": (0, 255, 255), "F": (0, 255, 0), "C": (255, 0, 0)}
+    COLORS = {"B": (0, 255, 255), "F": (0, 255, 0), "C": (255, 0, 0), "T": (0, 128, 255)}
     for key in text_locations.keys():
         locs = text_locations[key]
         color = COLORS[key]

@@ -571,7 +571,7 @@ def main():
 
     display(bs_rgb)
 
-    PENCIL_THICKNESS = 20
+    PENCIL_THICKNESS = 15
     cur_img = bs_rgb.copy()
     next_img = cur_img.copy()
     for passes in range(PENCIL_THICKNESS):
@@ -585,6 +585,14 @@ def main():
                             next_img[y][x] = nc
                             break
         cur_img = next_img.copy()
+
+    display(cur_img)
+
+    WALL_COLOR = (0, 0, 255)
+    for y in range(len(cur_img)):
+        for x in range(len(cur_img[0])):
+            if tuple(cur_img[y][x]) == (0, 0, 0):
+                cur_img[y][x] = WALL_COLOR
     
     display(cur_img)
 

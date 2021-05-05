@@ -21,6 +21,13 @@ def display(img):
         cv2.waitKey(1)
     sleep(1)
     
+def range_minus_255_to_255(image):
+    img = image.copy()
+    img = 2 * img
+    for y in range(len(img)):
+        for x in range(len(img[0])):
+            img[y][x] -= 255
+    return img
 
 def convolve_symbols(img, symbols, width=128, height=128):
     image = img.copy()
@@ -50,17 +57,45 @@ def convolve_symbols(img, symbols, width=128, height=128):
     for y in range(height):
         for x in range(width):
             kernel_nums[y][x] += merged_symbol[y][x]
+
+    # merged_symbol = threshold(merged_symbol, min=40)
+    # display(merged_symbol)
             
     kernel = np.array(kernel_nums)
+    kernel = range_minus_255_to_255(kernel)
     total = np.sum(kernel)
-    kernel = 1/total * kernel
-    av = np.average(kernel)
-    kernel = (kernel - av)
-    kernel = 2 * kernel
+    kernel = 1.0/total * kernel  # normalize
 
-    convolved = cv2.filter2D(image, -1, kernel)
+    image = threshold(image, 30)
+    merged_symbol = threshold(merged_symbol, 30)
 
-    return convolved
+    matched = cv2.matchTemplate(image, merged_symbol, cv2.TM_SQDIFF)
+    largest = max([max(matched[y]) for y in range(len(matched))])
+    matched = 1/largest * matched
+    matched = (matched * 255.0).astype('uint8')
+    matched = invert(matched)
+
+    dw = len(image[0]) - len(matched[0])
+    dh = len(image) - len(matched)
+
+    matched = cv2.copyMakeBorder(matched, math.floor(dh/2), math.ceil(dh/2), math.floor(dw/2), math.ceil(dw/2), cv2.BORDER_CONSTANT, value=0)
+    assert(len(image[0]) == len(matched[0]))
+    assert(len(image) == len(matched))
+
+    # im = image.copy()
+    # im = threshold(im, min=40)
+    # # display(im)
+    # im = range_minus_255_to_255(im)
+
+    # convolved = cv2.matchTemplate(image, merged_symbol, cv2.TM_CCOEFF)
+    # # display(convolved)
+
+    # # convolved = cv2.filter2D(im, -1, kernel)
+    # # display(convolved)
+    # cnv = np.array([[int(max(0, min(255, pix * 255.0))) for pix in row]for row in convolved], dtype='uint8')
+    # # cnv = (convolved * 255.0).astype('uint8')
+    # display(cnv)
+    return matched
 
 def merge_all(images):
     merge_factor = 2
@@ -70,19 +105,31 @@ def merge_all(images):
         merge_factor += 1
     return merged_image
 
+def combine_all(images):
+    if len(images) == 0:
+        return None
+    if len(images) == 1:
+        return images[0]
+    result = images[0]
+    for img in images[1:]:
+        result = cv2.bitwise_or(result, img)
+    return result
+
+
 def get_symbol(img, symbol_paths):
     symbols = [import_image(path) for path in symbol_paths]
 
     ts = []
 
-    THRESHOLD_MIN = 35
-    for width in range(32, 133, 8):
-        for height in range(64, 145, 8):
+    THRESHOLD_MIN = 160
+    for width in range(32, 133, 8):  # 32, 133
+        for height in range(48, 145, 8):  # 64, 145
             convolved = convolve_symbols(img, symbols, width=width, height=height)
             t = threshold(convolved, min=THRESHOLD_MIN)
             ts.append(t.copy())
 
-    T = merge_all(ts)
+    # T = merge_all(ts)
+    T = combine_all(ts)
     blur(T)
     thresh = threshold(T, 40)
     display(thresh)
@@ -99,11 +146,11 @@ def get_symbol(img, symbol_paths):
         cv2.circle(segs, (cx, cy), 20, (0, 255, 0))
     #display(segs)
 
-    output = img.copy()
-    output = gray(output)
-    BG = cv2.subtract(output, T)
-    R = cv2.add(output, T)
-    output = cv2.merge([BG, BG, R])
+    # output = img.copy()
+    # output = gray(output)
+    # BG = cv2.subtract(output, T)
+    # R = cv2.add(output, T)
+    # output = cv2.merge([BG, BG, R])
 
     #display(output)
 
@@ -433,12 +480,27 @@ def neighbour_colors(img, x, y):
     for xy in xys:
         result.append(tuple(img[xy[1]][xy[0]]))
     return result
-                
+
+
+def template_match_test():
+    img = import_image("tests/test_data/sketch_scanned5.png")
+    template = import_image("tests/test_data/symbols/B1.png")
+    template = cv2.resize(template, (52, 74))
+    matched = cv2.matchTemplate(img, template, cv2.TM_SQDIFF)
+    largest = max([max(matched[y]) for y in range(len(matched))])
+    matched = 1/largest * matched
+    matched = (matched * 255.0).astype('uint8')
+    matched = invert(matched)
+    matched = threshold(matched, 160)
+    display(matched)
+
 def main():
     ''' tests '''
+    # template_match_test()
+
     img = import_image("tests/test_data/sketch_scanned5.png")
     text_img = import_image("tests/test_data/sketch_scanned5.png")
-    text_locations = get_text(text_img, texts = ["A", "B", "C", "F"])
+    text_locations = get_text(text_img, texts = ["B", "A", "C", "F"])
     all_locs = []
     for key in text_locations.keys():
         locs = text_locations[key]

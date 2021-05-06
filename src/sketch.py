@@ -572,7 +572,15 @@ def main():
 
     display(bs_rgb)
 
-    PENCIL_THICKNESS = 15
+    SCALE_DOWN = 4
+
+    h, w = bs_rgb.shape[:2]
+
+    bs_rgb = cv2.resize(bs_rgb, (int(w/SCALE_DOWN), int(h/SCALE_DOWN)), interpolation=cv2.INTER_NEAREST)
+    print("resizing")
+    display(bs_rgb)
+
+    PENCIL_THICKNESS = int(16 / SCALE_DOWN)
     cur_img = bs_rgb.copy()
     next_img = cur_img.copy()
     for passes in range(PENCIL_THICKNESS):

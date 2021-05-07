@@ -50,21 +50,7 @@ def convolve_symbols(img, symbols, width=128, height=128):
         merged_symbol = cv2.addWeighted(merged_symbol, (merge_factor - 1) / merge_factor, sym, 1 / merge_factor, 0)
         merge_factor += 1
 
-    width = len(merged_symbol[0])
-    height = len(merged_symbol)
-    kernel_nums = [[0 for x in range(width)] for y in range(height)]
-
-    for y in range(height):
-        for x in range(width):
-            kernel_nums[y][x] += merged_symbol[y][x]
-
-    # merged_symbol = threshold(merged_symbol, min=40)
     # display(merged_symbol)
-            
-    kernel = np.array(kernel_nums)
-    kernel = range_minus_255_to_255(kernel)
-    total = np.sum(kernel)
-    kernel = 1.0/total * kernel  # normalize
 
     image = blur(image, size=5)
     image = threshold(image, 30)
@@ -84,19 +70,6 @@ def convolve_symbols(img, symbols, width=128, height=128):
     assert(len(image[0]) == len(matched[0]))
     assert(len(image) == len(matched))
 
-    # im = image.copy()
-    # im = threshold(im, min=40)
-    # # display(im)
-    # im = range_minus_255_to_255(im)
-
-    # convolved = cv2.matchTemplate(image, merged_symbol, cv2.TM_CCOEFF)
-    # # display(convolved)
-
-    # # convolved = cv2.filter2D(im, -1, kernel)
-    # # display(convolved)
-    # cnv = np.array([[int(max(0, min(255, pix * 255.0))) for pix in row]for row in convolved], dtype='uint8')
-    # # cnv = (convolved * 255.0).astype('uint8')
-    # display(cnv)
     return matched
 
 def merge_all(images):
@@ -507,6 +480,9 @@ def main():
 
     img = import_image("tests/test_data/sketch_scanned6.png")
     text_img = import_image("tests/test_data/sketch_scanned6.png")
+
+    display(img)
+
     text_locations = get_text(text_img, texts = ["B", "C", "F", "T"])
     all_locs = []
     for key in text_locations.keys():
@@ -514,7 +490,7 @@ def main():
         for l in locs:
             all_locs.append(l)
             # cv2.circle(text_img, l, 10, (255, 0, 0), thickness=5)
-            text_img = cv2.putText(text_img, key, l, cv2.FONT_HERSHEY_SIMPLEX, 1, (255, 0, 0), 2, cv2.LINE_AA)
+            text_img = cv2.putText(text_img, key, l, cv2.FONT_HERSHEY_SIMPLEX, 2, (255, 0, 0), 2, cv2.LINE_AA)
     WIDTH = 80
     HEIGHT = 90
     for tl in all_locs:

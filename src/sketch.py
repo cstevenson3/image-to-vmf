@@ -57,7 +57,14 @@ def convolve_symbols(img, symbols, width=128, height=128):
     merged_symbol = blur(merged_symbol, size=5)
     merged_symbol = threshold(merged_symbol, 30)
 
-    matched = cv2.matchTemplate(image, merged_symbol, cv2.TM_SQDIFF)
+    SCALE = 2
+    scaled_image = scale(image, 1/SCALE, interpolation=cv2.INTER_LINEAR)
+    template = scale(merged_symbol, 1/SCALE, interpolation=cv2.INTER_LINEAR)
+
+    matched = cv2.matchTemplate(scaled_image, template, cv2.TM_SQDIFF)
+
+    matched = scale(matched, SCALE)
+
     largest = max([max(matched[y]) for y in range(len(matched))])
     matched = 1/largest * matched
     matched = (matched * 255.0).astype('uint8')
@@ -206,6 +213,10 @@ def find_edge_ends(bin_img, dilation_iterations = 1):
     #display(dil)
 
     return dil
+
+def scale(img, scale, interpolation=cv2.INTER_NEAREST):
+    result = cv2.resize(img, (int(scale * len(img[0])), int(scale * len(img))), interpolation=interpolation)
+    return result
 
 def gray_to_rgb(gray):
     return cv2.merge([gray, gray, gray])
@@ -464,9 +475,12 @@ def neighbour_colors(img, x, y):
 
 def template_match_test():
     img = import_image("tests/test_data/sketch_scanned5.png")
-    template = import_image("tests/test_data/symbols/A1.png")
+    template = import_image("tests/test_data/symbols/B1.png")
     template = cv2.resize(template, (52, 74))
+    img = scale(img, 1/2, interpolation=cv2.INTER_LINEAR)
+    template = scale(template, 1/2, interpolation=cv2.INTER_LINEAR)
     matched = cv2.matchTemplate(img, template, cv2.TM_SQDIFF)
+    matched = scale(matched, 2)
     largest = max([max(matched[y]) for y in range(len(matched))])
     matched = 1/largest * matched
     matched = (matched * 255.0).astype('uint8')

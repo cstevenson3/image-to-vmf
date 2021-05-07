@@ -530,7 +530,6 @@ def main():
             bs_rgb,_ = flood_fill(bs_rgb, l, color)
 
     display(bs_rgb)
-    #get_borders(img)
 
     UNKNOWN_COLORS = [(192, 192, 192), (255, 255, 255)]
 
@@ -545,6 +544,7 @@ def main():
     right = 0
     top = math.inf
     right = 0
+
     for y in range(len(bs_rgb)):
         for x in range(len(bs_rgb[0])):
             if tuple(bs_rgb[y][x]) != (0, 0, 0):
@@ -557,20 +557,22 @@ def main():
                 if y > bottom:
                     bottom = y
     
-    # crop
-    bs_rgb = bs_rgb[top-2:bottom+2, left-2:right+2]
-
-    display(bs_rgb)
-
+    # filling in gaps
     SCALE_DOWN = 4
+    PENCIL_THICKNESS = int(16 / SCALE_DOWN)
+    PADDING = 4
 
+    # crop
+    boundary = SCALE_DOWN * (PENCIL_THICKNESS + PADDING)
     h, w = bs_rgb.shape[:2]
-
-    bs_rgb = cv2.resize(bs_rgb, (int(w/SCALE_DOWN), int(h/SCALE_DOWN)), interpolation=cv2.INTER_NEAREST)
-    print("resizing")
+    bs_rgb = bs_rgb[max(top-boundary, 0):min(bottom+boundary, h-1), max(left-boundary, 0):min(right+boundary, w-1)]
     display(bs_rgb)
 
-    PENCIL_THICKNESS = int(16 / SCALE_DOWN)
+    #resize
+    h, w = bs_rgb.shape[:2]
+    bs_rgb = cv2.resize(bs_rgb, (int(w/SCALE_DOWN), int(h/SCALE_DOWN)), interpolation=cv2.INTER_NEAREST)
+    display(bs_rgb)
+
     cur_img = bs_rgb.copy()
     next_img = cur_img.copy()
     for passes in range(PENCIL_THICKNESS):

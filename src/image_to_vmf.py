@@ -30,12 +30,13 @@ def import_config(filepath):
 def import_image(filepath):
     png_reader = png.Reader(filepath)
     width, height, rows, info = png_reader.read()
+    dims = 4 if info["alpha"] else 3
 
     image = Image(width, height)
 
     for y, row in enumerate(rows):
         for x in range(width):
-            r, g, b = (row[4 * x], row[4 * x + 1], row[4 * x + 2])
+            r, g, b = (row[dims * x], row[dims * x + 1], row[dims * x + 2])
             r, g, b = (float(r) / 255, float(g) / 255, float(b) / 255)
             h, s, v = colorsys.rgb_to_hsv(r, g, b)
             # TODO, could convert back to integer values 
@@ -46,7 +47,7 @@ def import_image(filepath):
 
 def main(args):
     print("Importing Image...")
-    image = import_image("tests/test_data/map2.png")
+    image = import_image("tests/test_data/output/output.png")
 
     config = import_config("tests/test_data/config.json")
     config.skybox_x = image.width

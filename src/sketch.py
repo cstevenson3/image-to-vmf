@@ -11,6 +11,8 @@ from pytesseract import Output
 
 import sketch_ocr
 
+DEBUGGING = False
+
 def import_image(filename):
     return cv2.imread(filename)
 
@@ -412,7 +414,7 @@ def get_borders(img):
     # thres = cv2.drawContours(thres, contours, -1, (0,0,255), 2)
     # kernel = np.ones((3,3), np.uint8)
     # erosion = cv2.erode(thres, kernel, iterations=3)
-    display(output)
+    display(output) if DEBUGGING else None
 
 def get_black_segments(img):
     MIN_AREA = 1000
@@ -486,7 +488,7 @@ def template_match_test():
     matched = (matched * 255.0).astype('uint8')
     matched = invert(matched)
     matched = threshold(matched, 160)
-    display(matched)
+    display(matched) if DEBUGGING else None
 
 def main():
     ''' tests '''
@@ -495,7 +497,7 @@ def main():
     img = import_image("tests/test_data/sketch_scanned9.png")
     text_img = import_image("tests/test_data/sketch_scanned9.png")
 
-    display(img)
+    display(img) if DEBUGGING else None
 
     text_locations = get_text(text_img, texts = ["Z", "X", "H", "W"])
     all_locs = []
@@ -514,8 +516,8 @@ def main():
         top = int(tl[1] - HEIGHT / 2)
         bottom = int(tl[1] + HEIGHT / 2)
         cv2.rectangle(img, (left, top), (right, bottom), (255, 255, 255), thickness=-WIDTH)
-    display(img)
-    display(text_img)
+    display(img) if DEBUGGING else None
+    display(text_img) if DEBUGGING else None
     # print(text_locations)
 
     pr = get_pixel_regions(img)
@@ -530,7 +532,7 @@ def main():
         for l in locs:
             bs_rgb,_ = flood_fill(bs_rgb, l, color)
 
-    display(bs_rgb)
+    display(bs_rgb) if DEBUGGING else None
 
     UNKNOWN_COLORS = [(192, 192, 192), (255, 255, 255)]
 
@@ -539,7 +541,7 @@ def main():
             if tuple(bs_rgb[y][x]) in UNKNOWN_COLORS:
                 bs_rgb[y][x] = (0, 0, 0)
     
-    display(bs_rgb)
+    display(bs_rgb) if DEBUGGING else None
 
     left = math.inf
     right = 0
@@ -567,12 +569,12 @@ def main():
     boundary = SCALE_DOWN * (PENCIL_THICKNESS + PADDING)
     h, w = bs_rgb.shape[:2]
     bs_rgb = bs_rgb[max(top-boundary, 0):min(bottom+boundary, h-1), max(left-boundary, 0):min(right+boundary, w-1)]
-    display(bs_rgb)
+    display(bs_rgb) if DEBUGGING else None
 
     #resize
     h, w = bs_rgb.shape[:2]
     bs_rgb = cv2.resize(bs_rgb, (int(w/SCALE_DOWN), int(h/SCALE_DOWN)), interpolation=cv2.INTER_NEAREST)
-    display(bs_rgb)
+    display(bs_rgb) if DEBUGGING else None
 
     cur_img = bs_rgb.copy()
     next_img = cur_img.copy()
@@ -588,7 +590,7 @@ def main():
                             break
         cur_img = next_img.copy()
 
-    display(cur_img)
+    display(cur_img) if DEBUGGING else None
 
     WALL_COLOR = (0, 0, 255)
     for y in range(len(cur_img)):
@@ -596,6 +598,8 @@ def main():
             if tuple(cur_img[y][x]) == (0, 0, 0):
                 cur_img[y][x] = WALL_COLOR
     
+    cur_img = scale(cur_img, 4, interpolation=cv2.INTER_NEAREST)
+
     display(cur_img)
 
     cv2.imwrite("tests/test_data/output/output.png", cur_img)

@@ -9,29 +9,42 @@ class Map:
         self.buyzones = []
         self.spawns = []
 
-class Floor:
+    def scale(self, factor):
+        for bobj in self.floors + self.walls + self.bombsites + self.buyzones:
+            bobj.scale(factor)
+        for spawn in self.spawns:
+            spawn.scale(factor)
+
+class BorderedObject:
     def __init__(self):
-        self.border = []  # list of Vec
+        self.border = []
+
+    def scale(self, factor):
+        self.border = self.border[:]  # some objects share a border before this clone
+        for i in range(len(self.border)):
+            temp = self.border[i]
+            self.border[i] = (temp[0] * factor, temp[1] * factor)
+
+
+class Floor(BorderedObject):
+    def __init__(self):
         self.bottom = 0.0
         self.top = 4.0
         self.material = None
 
-class Wall:
+class Wall(BorderedObject):
     def __init__(self):
-        self.border = [] # list of Vec
         self.bottom = 0.0
         self.top = 50.0
         self.material = None
 
-class Bombsite:
+class Bombsite(BorderedObject):
     def __init__(self):
-        self.border = [] # list of Vec
         self.bottom = 0.0
         self.top = 128.0
 
-class Buyzone:
+class Buyzone(BorderedObject):
     def __init__(self):
-        self.border = [] # list of Vec
         self.bottom = 0.0
         self.top = 128.0
         self.team = "T" # T or CT
@@ -40,6 +53,10 @@ class Spawn:
     def __init__(self):
         self.origin = (0, 0, 0)
         self.team = "T" # T or CT
+    
+    def scale(self, factor):
+        temp = self.origin
+        self.origin = (temp[0] * factor, temp[1] * factor, temp[2])
 
 def generate_map(config, geometry):
     """ Take image geometry and generate a map """

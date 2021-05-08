@@ -55,7 +55,7 @@ def convolve_symbols(img, symbols, width=128, height=128):
     image = blur(image, size=5)
     image = threshold(image, 30)
     merged_symbol = blur(merged_symbol, size=5)
-    merged_symbol = threshold(merged_symbol, 30)
+    merged_symbol = threshold(merged_symbol, 20)
 
     SCALE = 2
     scaled_image = scale(image, 1/SCALE, interpolation=cv2.INTER_LINEAR)
@@ -104,7 +104,7 @@ def get_symbol(img, symbol_paths):
     ts = []
 
     THRESHOLD_MIN = 170
-    for width in range(28, 84, 8):  # 32, 133
+    for width in range(28, 96, 8):  # 32, 133
         for height in range(44, 74, 8):  # 64, 145
             convolved = convolve_symbols(img, symbols, width=width, height=height)
             t = threshold(convolved, min=THRESHOLD_MIN)
@@ -492,12 +492,12 @@ def main():
     ''' tests '''
     # template_match_test()
 
-    img = import_image("tests/test_data/sketch_scanned6.png")
-    text_img = import_image("tests/test_data/sketch_scanned6.png")
+    img = import_image("tests/test_data/sketch_scanned9.png")
+    text_img = import_image("tests/test_data/sketch_scanned9.png")
 
     display(img)
 
-    text_locations = get_text(text_img, texts = ["B", "C", "F", "T"])
+    text_locations = get_text(text_img, texts = ["Z", "X", "H", "W"])
     all_locs = []
     for key in text_locations.keys():
         locs = text_locations[key]
@@ -505,8 +505,9 @@ def main():
             all_locs.append(l)
             # cv2.circle(text_img, l, 10, (255, 0, 0), thickness=5)
             text_img = cv2.putText(text_img, key, l, cv2.FONT_HERSHEY_SIMPLEX, 2, (255, 0, 0), 2, cv2.LINE_AA)
-    WIDTH = 80
-    HEIGHT = 90
+    # covering rectangle
+    WIDTH = 90
+    HEIGHT = 80
     for tl in all_locs:
         left = int(tl[0] - WIDTH / 2)
         right = int(tl[0] + WIDTH / 2)
@@ -522,7 +523,7 @@ def main():
 
     bs_rgb = gray_to_rgb(bs)
 
-    COLORS = {"B": (0, 255, 255), "F": (0, 255, 0), "C": (255, 0, 0), "T": (0, 128, 255)}
+    COLORS = {"Z": (0, 255, 255), "X": (0, 255, 0), "H": (255, 0, 0), "W": (0, 128, 255)}
     for key in text_locations.keys():
         locs = text_locations[key]
         color = COLORS[key]
@@ -596,6 +597,8 @@ def main():
                 cur_img[y][x] = WALL_COLOR
     
     display(cur_img)
+
+    cv2.imwrite("tests/test_data/output/output.png", cur_img)
 
 if __name__ == "__main__":
     main()

@@ -89,8 +89,7 @@ def generate_floor_brushes(floor):
 
 def generate_vmf_body(config, map):
     ''' Take a map and generate a valve map file object '''
-    SCALE = 2
-    map.scale(SCALE)
+    map.scale(config.scale)
     brushes = []
     entities = []
     for floor in map.floors:
@@ -124,7 +123,7 @@ def generate_vmf_body(config, map):
         spaw._classname = "info_player_terrorist" if spawn.team == "T" else "info_player_counterterrorist"
         entities.append(spaw)
     # skybox
-    skybox_brushes = constructs.hollow_box(-128, SCALE * config.skybox_x + 128, -128, SCALE * config.skybox_y + 128, -32, config.skybox_z)
+    skybox_brushes = constructs.hollow_box(-128, config.scale * config.skybox_x + 128, -128, config.scale * config.skybox_y + 128, -32, config.skybox_z)
     [brush.set_material("TOOLS/TOOLSSKYBOX") for brush in skybox_brushes]
     brushes += skybox_brushes
     world = World()

@@ -598,7 +598,7 @@ def main():
             if tuple(cur_img[y][x]) == (0, 0, 0):
                 cur_img[y][x] = WALL_COLOR
     
-    cur_img = scale(cur_img, 4, interpolation=cv2.INTER_NEAREST)
+    # cur_img = scale(cur_img, 4, interpolation=cv2.INTER_NEAREST)
 
     display(cur_img)
 

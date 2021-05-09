@@ -15,11 +15,13 @@ class Config:
     ''' Usually initialised from a file '''
     def __init__(self):
         self.color_mappings = {}  # key ColorHSV, value SegmentType
+        self.scale = 1
 
     def __init__(self, json):
         self.color_mappings = {}
         for key in json["color_mappings"].keys():
             self.color_mappings[key] = ColorHSV(*json["color_mappings"][key])
+        self.scale = json["scale"]
 
 def import_config(filepath):
     f = open(filepath)

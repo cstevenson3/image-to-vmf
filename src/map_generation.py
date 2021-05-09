@@ -117,7 +117,7 @@ def generate_map(config, geometry):
             sum_of_vertices = [sum([vertices[i][j] for i in range(len(vertices))]) for j in range(2)]
             average_vertex = [sum_of_vertices[i] / len(vertices) for i in range(2)]
 
-            spawn_offset = 50  # space out spawns this much
+            spawn_offset = int(50 / config.scale)  # space out spawns this much
             spawn_vertices = [[(average_vertex[0] + x_mult * spawn_offset, average_vertex[1] + y_mult * spawn_offset) for x_mult in [-1, 0, 1]] for y_mult in [-1, 0, 1]]
             
             for row in spawn_vertices:

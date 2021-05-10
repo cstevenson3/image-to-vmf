@@ -600,6 +600,14 @@ def main():
     
     # cur_img = scale(cur_img, 4, interpolation=cv2.INTER_NEAREST)
 
+    # break up the outer wall to avoid donut topology and excessively large brushes
+    h, w = cur_img.shape[:2]
+    x = int(w/2)
+    y = 0
+    while tuple(cur_img[y][x]) == (0, 0, 255): #TODO don't hardcode color
+        cur_img[y][x] = [0, 0, 0]
+        y += 1
+
     display(cur_img)
 
     cv2.imwrite("tests/test_data/output/output.png", cur_img)

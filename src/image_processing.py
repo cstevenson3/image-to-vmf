@@ -359,12 +359,14 @@ def image_segmentation(image):
 def process_geometry(config, image):
     print("----Segmenting Image...")
     segments = image_segmentation(image)
+    print("----Generating Borders...")
+    for segment in segments:
+        segment.generate_border()
     print("----Simplifying Borders...")
     i = 0
     for segment in segments:
         print("--------Simplifying Border...")
-        segment.generate_border()
-        segment.refine_border(0.01)
+        segment.refine_border(0.001)
         # segment.print_border(str(i) + ".svg")
         i += 1
     geometry = Geometry()

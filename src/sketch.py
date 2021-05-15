@@ -490,9 +490,25 @@ def template_match_test():
     matched = threshold(matched, 160)
     display(matched) if DEBUGGING else None
 
+def hamming_distance(img1, img2):
+    ''' differing pixels between img1 and img2 relative to their size '''
+    total = 0
+    h, w = img1.shape[:2]
+    for y in range(h):
+        for x in range(w):
+            if tuple(img1[y][x]) != tuple(img2[y][x]):
+                total +=1
+    proportion = float(total) / float(w * h)
+    return proportion
+
 def main():
     ''' tests '''
     # template_match_test()
+
+    # img1 = import_image("tests/test_data/output/manual.png")
+    # img2 = import_image("tests/test_data/output/manual2.png")
+    # print(hamming_distance(img1, img2))
+    # quit()
 
     img = import_image("tests/test_data/sketch_scanned9.png")
     text_img = import_image("tests/test_data/sketch_scanned9.png")
@@ -569,11 +585,13 @@ def main():
     boundary = SCALE_DOWN * (PENCIL_THICKNESS + PADDING)
     h, w = bs_rgb.shape[:2]
     bs_rgb = bs_rgb[max(top-boundary, 0):min(bottom+boundary, h-1), max(left-boundary, 0):min(right+boundary, w-1)]
+    original = img[max(top-boundary, 0):min(bottom+boundary, h-1), max(left-boundary, 0):min(right+boundary, w-1)]  # for testing
     display(bs_rgb) if DEBUGGING else None
 
     #resize
     h, w = bs_rgb.shape[:2]
     bs_rgb = cv2.resize(bs_rgb, (int(w/SCALE_DOWN), int(h/SCALE_DOWN)), interpolation=cv2.INTER_NEAREST)
+    original = cv2.resize(original, (int(w/SCALE_DOWN), int(h/SCALE_DOWN)), interpolation=cv2.INTER_NEAREST)
     display(bs_rgb) if DEBUGGING else None
 
     cur_img = bs_rgb.copy()
@@ -599,6 +617,7 @@ def main():
                 cur_img[y][x] = WALL_COLOR
     
     # cur_img = scale(cur_img, 4, interpolation=cv2.INTER_NEAREST)
+    # original = scale(original, 4, interpolation=cv2.INTER_NEAREST)
 
     # break up the outer wall to avoid donut topology and excessively large brushes
     h, w = cur_img.shape[:2]
@@ -611,6 +630,7 @@ def main():
     display(cur_img)
 
     cv2.imwrite("tests/test_data/output/output.png", cur_img)
+    cv2.imwrite("tests/test_data/output/original.png", original)
 
 if __name__ == "__main__":
     main()

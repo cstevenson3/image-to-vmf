@@ -121,7 +121,6 @@ def get_symbol(img, symbol_paths):
     # display(T)
     # print("final thresh")
     thresh = threshold(T, 15)
-    # display(thresh)
 
     thresh_rgb = cv2.merge([thresh, thresh, thresh])
     ctrs = find_contours(thresh)
@@ -515,14 +514,15 @@ def main():
 
     display(img) if DEBUGGING else None
 
-    text_locations = get_text(text_img, texts = ["Z", "X", "H", "W"])
+    print("Finding text...")
+    text_locations = get_text(text_img, texts = ["X", "Z", "H", "W"])
     all_locs = []
     for key in text_locations.keys():
         locs = text_locations[key]
         for l in locs:
             all_locs.append(l)
             # cv2.circle(text_img, l, 10, (255, 0, 0), thickness=5)
-            text_img = cv2.putText(text_img, key, l, cv2.FONT_HERSHEY_SIMPLEX, 2, (255, 0, 0), 2, cv2.LINE_AA)
+            text_img = cv2.putText(text_img, key, l, cv2.FONT_HERSHEY_SIMPLEX, 2, (255, 0, 0), 4, cv2.LINE_AA)
     # covering rectangle
     WIDTH = 90
     HEIGHT = 80
@@ -536,6 +536,7 @@ def main():
     display(text_img) if DEBUGGING else None
     # print(text_locations)
 
+    print("Segmenting...")
     pr = get_pixel_regions(img)
     bs = get_black_segments(pr)
 
@@ -594,10 +595,11 @@ def main():
     original = cv2.resize(original, (int(w/SCALE_DOWN), int(h/SCALE_DOWN)), interpolation=cv2.INTER_NEAREST)
     display(bs_rgb) if DEBUGGING else None
 
+    print("Filling pencil gaps...")
     cur_img = bs_rgb.copy()
     next_img = cur_img.copy()
     for passes in range(PENCIL_THICKNESS):
-        print("Pass {}".format(passes + 1))
+        print("--Pass {}".format(passes + 1))
         for y in range(len(cur_img)):
             for x in range(len(cur_img[0])):
                 if tuple(cur_img[y][x]) == (0, 0, 0):
@@ -615,7 +617,7 @@ def main():
         for x in range(len(cur_img[0])):
             if tuple(cur_img[y][x]) == (0, 0, 0):
                 cur_img[y][x] = WALL_COLOR
-    
+
     # cur_img = scale(cur_img, 4, interpolation=cv2.INTER_NEAREST)
     # original = scale(original, 4, interpolation=cv2.INTER_NEAREST)
 
@@ -627,7 +629,7 @@ def main():
         cur_img[y][x] = [0, 0, 0]
         y += 1
 
-    display(cur_img)
+    display(cur_img) if DEBUGGING else None
 
     cv2.imwrite("tests/test_data/output/output.png", cur_img)
     cv2.imwrite("tests/test_data/output/original.png", original)

@@ -163,6 +163,7 @@ def output_results(orig, results):
     # sort the results bounding box coordinates from top to bottom
     results = sorted(results, key=lambda r:r[0][1])
     # loop over the results
+    output = orig.copy()
     for ((startX, startY, endX, endY), text) in results:
         # display the text OCR'd by Tesseract
         print("OCR TEXT")
@@ -172,14 +173,16 @@ def output_results(orig, results):
         # using OpenCV, then draw the text and a bounding box surrounding
         # the text region of the input image
         text = "".join([c if ord(c) < 128 else "" for c in text]).strip()
-        output = orig.copy()
+        # output = orig.copy()
         cv2.rectangle(output, (startX, startY), (endX, endY),
             (0, 0, 255), 2)
         cv2.putText(output, text, (startX, startY - 20),
             cv2.FONT_HERSHEY_SIMPLEX, 1.2, (0, 0, 255), 3)
         # show the output image
-        cv2.imshow("Text Detection", output)
-        cv2.waitKey(0)
+        #cv2.imshow("Text Detection", output)
+        #cv2.waitKey(0)
+    cv2.imshow("Text Detection", output)
+    cv2.waitKey(0)
 
 def run(image, east, width=320, height=320, min_confidence=0.5, padding=0):
     image, orig, H, W, origH, origW, rH, rW = prepare_image(image, width, height)

@@ -1,6 +1,6 @@
 # Overview
 
-This project converts a hand sketched or computer drawn CS:GO layout into a VMF file editable and compilable in the Hammer map editor. See tests/test_data for examples of sketches (pencil on paper) and computer drawn layouts (blocked out colour).
+This project converts a hand sketched or computer drawn CS:GO layout into a VMF file editable and compilable in the Hammer map editor. See tests/test_data for examples of sketches (pencil on paper) and computer drawn layouts (blocked out colour). The sketch conversion gives a blocked colour layout to be fed into the blocked colour layout program.
 
 ## Blocked colour layouts
 
@@ -33,7 +33,7 @@ For the project:
 
 pip3 install -r requirements.txt
 
-OpenCV must be installed, use instructions here https://docs.opencv.org/master/df/d65/tutorial_table_of_content_introduction.html for your particular setup. If that doesn't work try others' solutions online.
+OpenCV (I'm using version 4.5.1) must be installed, use instructions here https://docs.opencv.org/master/df/d65/tutorial_table_of_content_introduction.html for your particular setup. If that doesn't work try others' solutions online.
 
 # Run
 
@@ -57,7 +57,7 @@ To use the output.png from sketch.py:
 
 python3 src/image_to_vmf.py
 
-This produces tests/test_data/output/output.vmf, which can be transferred to the Hammer SDK maps folder to be opened.
+This produces tests/test_data/output/output.vmf, which can be transferred to the Hammer SDK maps folder to be opened in the editor.
 
 # Code
 

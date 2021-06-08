@@ -5,12 +5,6 @@ from os import walk
 import cv2
 import numpy as np
 
-#OCR
-import pytesseract
-from pytesseract import Output
-
-import sketch_ocr
-
 DEBUGGING = False
 
 def import_image(filename):
@@ -121,6 +115,7 @@ def get_symbol(img, symbol_paths):
     # display(T)
     # print("final thresh")
     thresh = threshold(T, 15)
+    display(thresh) if DEBUGGING else None
 
     thresh_rgb = cv2.merge([thresh, thresh, thresh])
     ctrs = find_contours(thresh)
@@ -132,7 +127,7 @@ def get_symbol(img, symbol_paths):
         cy = int(y + h / 2)
         highlights.append((cx, cy))
         cv2.circle(segs, (cx, cy), 20, (0, 255, 0))
-    #display(segs)
+    # display(segs) if DEBUGGING else None
 
     # output = img.copy()
     # output = gray(output)
@@ -171,8 +166,10 @@ def get_symbol(img, symbol_paths):
                 break
 
     mids = [(int((match[0][0] + match[1][0]) / 2), int((match[0][1] + match[1][1]) / 2)) for match in matches]
-    [cv2.circle(segs, mid, 20, (255, 0, 0)) for mid in mids]
-    #display(segs)
+    for match in matches:
+        segs = cv2.line(segs, tuple(match[0]), tuple(match[1]), (0, 255, 0), 4)
+    # [cv2.circle(segs, mid, 20, (255, 0, 0)) for mid in mids]
+    display(segs) if DEBUGGING else None
 
     return mids
 

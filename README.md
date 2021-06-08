@@ -1,4 +1,4 @@
-
+This project converts a hand sketched or computer drawn CS:GO layout into a VMF file editable and compilable in the Hammer map editor. See tests/test_data for examples of sketches (pencil on paper) and computer drawn layouts (blocked out colour).
 
 # Setup:
 
@@ -31,4 +31,4 @@ To use the output.png from sketch.py:
 
 python3 src/image_to_vmf.py
 
-
+This produces output.vmf

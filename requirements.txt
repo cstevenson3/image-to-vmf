@@ -1,3 +1,5 @@
-pytest
-pypng
-drawSvg
+drawSvg==1.8.1
+imutils==0.5.4
+numpy==1.20.3
+pypng==0.0.20
+pytesseract==0.3.7

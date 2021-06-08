@@ -60,7 +60,7 @@ The two most relevant files are sketch.py and image_to_vmf.py. sketch.py handles
 
 sketch.py contains the code relevant to interpreting the pencil in a hand sketched layout, looking for segments between them, and understanding the hand written labels. sketch.convolve_symbols handles template matching to look for handwritten letters. sketch.get_symbol accumulates the results of template matching at different scales, and looks for pairs of letters (which are used as text labels). sketch.get_pixel_regions finds pencil and solidifies thin parts so that segmentation is robust. sketch.get_black_segments flood fills between pencil to find distinct segments. sketch.main gets the text labels and segments from these functions, applies the text label colours to segments by flood fill, and fills gaps. 
 
-## 
+## vmf creation
 
 image_to_vmf.py imports the image and configuration, and coordinates the steps of converting a blocked colour layout into a map file.
 

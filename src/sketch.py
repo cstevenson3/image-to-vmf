@@ -362,6 +362,7 @@ def main():
     ''' tests '''
     # template_match_test()
 
+    # hamming distance test
     # img1 = import_image("tests/test_data/output/manual.png")
     # img2 = import_image("tests/test_data/output/manual2.png")
     # print(hamming_distance(img1, img2))

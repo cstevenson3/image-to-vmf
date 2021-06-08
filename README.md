@@ -66,9 +66,9 @@ image_to_vmf.py imports the image and configuration, and coordinates the steps o
 
 image_processing.py flood fills and border walks to find the segments, their borders, and their labels. image_processing.image_segmentation flood fills to find pixels in each segment. image_processing.ImageSegment.generate_border does the border walk of a pixel segmentation to create a border. image_processing.Border.refine reduces the complexity of borders by removing unnecessary vertices (those that contribute excessively fine detail to the border). 
 
-map_generation.py creates a general model of a map layout from the scanned objects
+map_generation.py creates a general model of a map layout from the scanned objects. map_generation.generate_map goes through all labels and converts labelled segments to the relevant objects
 
-vmf_generation.py takes the general map model, and converts it into Source engine brushes, entities etc. vmf_generation.triangulate is the core of brush creation, where segment border polygons are triangulated so convex brushes can be made.
+vmf_generation.py takes the general map model, and converts it into Source engine brushes, entities etc. vmf_generation.triangulate is the core of brush creation, where segment border polygons are triangulated so convex brushes can be made. vmf_generation.generate_floor_brushes is where these triangles are actually converted to brushes, for all types of object similar to a floor in structure (fixed height and triangulated from bird's eye view, so floors, walls, bombsite entities etc.). vmf_generation.generate_vmf_body goes through every type of object to generate the needed VMF objects.
 
 ## other
 

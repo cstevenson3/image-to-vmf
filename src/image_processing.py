@@ -367,6 +367,7 @@ def process_geometry(config, image):
     for segment in segments:
         print("--------Simplifying Border...")
         segment.refine_border(0.001)
+        # to inspect the segments being produced
         # segment.print_border(str(i) + ".svg")
         i += 1
     geometry = Geometry()

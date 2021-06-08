@@ -172,6 +172,7 @@ def get_text(img, texts = ["A"]):
     _, _, filenames = next(walk(SYMBOL_PATH))
     for t in texts:
         t_filepaths = [SYMBOL_PATH + fn for fn in filenames if fn.startswith(t)]
+        print("---- Finding symbol " + t + t)
         points = get_symbol(img, t_filepaths)
         result[t] = points
 

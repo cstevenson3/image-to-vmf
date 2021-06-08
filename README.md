@@ -40,6 +40,7 @@ or to use the default test sketch:
 python3 src/sketch.py 
 
 This puts an output layout in tests/test_data/output/output.png
+Ignore the libpng warnings
 
 
 To convert a blocked colour layout into a vmf file:

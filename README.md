@@ -27,13 +27,13 @@ Try to write as similar to the samples as possible. You can make your own sample
 
 # Setup:
 
-Install python 3 and pip for python 3
+Install python 3 and pip for python 3 (when running substitute python3 and pip3 for python and pip if they are correctly pointed already)
 
 For the project:
 
 pip3 install -r requirements.txt
 
-OpenCV (I'm using version 4.5.1) must be installed, use instructions here https://docs.opencv.org/master/df/d65/tutorial_table_of_content_introduction.html for your particular setup. If that doesn't work try others' solutions online.
+OpenCV (I'm using version 4.5.1) must be installed, use instructions here https://docs.opencv.org/master/df/d65/tutorial_table_of_content_introduction.html for your particular setup. If that doesn't work try others' solutions online. I used pip on windows, and either pip or brew on mac (mac may need opencv_contrib).
 
 # Run
 
@@ -47,6 +47,7 @@ python3 src/sketch.py
 
 This puts an output layout in tests/test_data/output/output.png
 Ignore the libpng warnings
+Sketch conversion takes several minutes.
 
 
 To convert a blocked colour layout into a vmf file:

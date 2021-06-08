@@ -2,6 +2,8 @@
 
 This project converts a hand sketched or computer drawn CS:GO layout into a VMF file editable and compilable in the Hammer map editor. See tests/test_data for examples of sketches (pencil on paper) and computer drawn layouts (blocked out colour).
 
+## Blocked colour layouts
+
 Current colour config (colours must be exactly matched, use a color picker tool from the examples):
 Red: wall
 Green: floor
@@ -11,6 +13,8 @@ Orange: T spawn
 
 Note that donut topologies (blocks of colour with islands of other colour within them) are not supported currently, leave a gap of black when a loop is formed.
 
+## Sketch layouts
+
 Current text labelling config:
 
 unlabelled: wall
@@ -18,6 +22,8 @@ XX: floor
 ZZ: bombsite
 HH: CT spawn
 WW: T spawn
+
+Try to write as similar to the samples as possible. You can make your own samples if they have the same width/height and alignment, name them starting with the letter they represent.
 
 # Setup:
 
